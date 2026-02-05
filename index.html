@@ -18,6 +18,7 @@
         .btn-primary:hover { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
         .status-yes { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
         .status-no { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .readonly-field { background-color: #f3f4f6; cursor: not-allowed; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -97,8 +98,8 @@
             <div class="lg:col-span-1">
                 <div class="glass rounded-2xl shadow-lg p-6 sticky top-4">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-bold text-gray-800">➕ 新增客户</h2>
-                        <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded">* 必填</span>
+                        <h2 class="text-lg font-bold text-gray-800" id="formTitle">➕ 新增客户</h2>
+                        <button onclick="resetForm()" class="text-gray-400 hover:text-gray-600 text-sm">🔄 新增模式</button>
                     </div>
                     
                     <form id="customerForm" class="space-y-4">
@@ -265,12 +266,15 @@
             const month = now.getMonth() + 1;
             const dayOfMonth = now.getDate();
             const weekNum = Math.ceil(dayOfMonth / 7);
+            
             const weekStart = new Date(now);
             weekStart.setDate(now.getDate() - now.getDay() + 1);
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
+            
             const startStr = `${weekStart.getMonth() + 1}月${weekStart.getDate()}日`;
             const endStr = `${weekEnd.getMonth() + 1}月${weekEnd.getDate()}日`;
+            
             document.getElementById('weekInfo').textContent = `📅 ${year}年${month}月 ${startStr}-${endStr}（第${weekNum}周）`;
         }
 
@@ -368,25 +372,40 @@
             `).join('');
         }
 
+        function resetForm() {
+            document.getElementById('customerForm').reset();
+            document.getElementById('formTitle').innerHTML = '➕ 新增客户';
+            document.getElementById('editRowIndex').value = '';
+            document.getElementById('phone').removeAttribute('readonly');
+            document.getElementById('phone').classList.remove('readonly-field');
+            setStatus('unreplied');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function editRecord(index) {
             const r = filteredRecords[index];
             
+            document.getElementById('formTitle').innerHTML = '✏️ 编辑客户';
             document.getElementById('status').value = r.status || 'unreplied';
             setStatus(r.status || 'unreplied');
             document.getElementById('country').value = r.country || '';
             document.getElementById('region').value = r.region || '';
             document.getElementById('customerName').value = r.customerName || '';
             document.getElementById('phone').value = r.phone || '';
+            document.getElementById('phone').setAttribute('readonly', true); // 编辑时电话只读
+            document.getElementById('phone').classList.add('readonly-field');
             document.getElementById('email').value = r.email || '';
             document.getElementById('source').value = r.source || '';
             document.getElementById('background').value = r.background || '';
             document.getElementById('amount').value = r.amount || '';
             document.getElementById('details').value = r.details || '';
-            document.getElementById('editRowIndex').value = r.phone;
+            document.getElementById('editRowIndex').value = r.phone; // 用原电话作为标识
             
+            // 改变提交按钮
             const btn = document.getElementById('submitBtn');
             btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> 更新记录`;
             
+            // 滚动到表单
             window.scrollTo({ top: 0, behavior: 'smooth' });
             showToast('✏️ 正在编辑: ' + r.customerName, 'success');
         }
@@ -433,7 +452,7 @@
             }
 
             const btn = document.getElementById('submitBtn');
-            const isEdit = data.originalPhone && data.originalPhone !== data.phone;
+            const isEdit = !!data.originalPhone; // 有originalPhone就是编辑模式
             const originalText = btn.innerHTML;
             btn.innerHTML = '<span class="animate-pulse">💾 保存中...</span>';
             btn.disabled = true;
@@ -448,11 +467,7 @@
                 
                 if (result.success) {
                     showToast('✅ ' + result.message, 'success');
-                    document.getElementById('customerForm').reset();
-                    setStatus('unreplied');
-                    document.getElementById('editRowIndex').value = '';
-                    btn.innerHTML = originalText;
-                    // 保存后自动同步
+                    resetForm();
                     refreshData();
                 } else {
                     showToast('⚠️ ' + result.message, result.existing ? 'warning' : 'error');

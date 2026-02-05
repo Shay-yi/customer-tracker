@@ -18,6 +18,7 @@
         .btn-primary:hover { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
         .status-yes { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
         .status-no { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .readonly-field { background-color: #f3f4f6; cursor: not-allowed; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -28,7 +29,7 @@
                     <h1 class="text-2xl font-bold flex items-center gap-2">
                         <span class="text-3xl">📋</span> 客户记录系统
                     </h1>
-                    <p id="weekInfo" class="text-white/80 text-sm mt-1">📅 2026年2月2日-2月8日（第1周）</p>
+                    <p id="weekInfo" class="text-white/80 text-sm mt-1">📅 2026年2月2日-2月8日（第1周） · 预览版</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <button onclick="refreshDemo()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
@@ -47,7 +48,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">本周客户</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1" id="totalCount">3</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1" id="totalCount">2</p>
                     </div>
                     <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center"><span class="text-2xl">👥</span></div>
                 </div>
@@ -56,7 +57,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">已回复</p>
-                        <p class="text-3xl font-bold text-emerald-500 mt-1" id="repliedCount">2</p>
+                        <p class="text-3xl font-bold text-emerald-500 mt-1" id="repliedCount">1</p>
                     </div>
                     <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center"><span class="text-2xl">✅</span></div>
                 </div>
@@ -74,7 +75,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">成单金额</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1" id="totalAmount">$4,500</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1" id="totalAmount">$2,000</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center"><span class="text-2xl">💰</span></div>
                 </div>
@@ -83,7 +84,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">平均金额</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1" id="avgAmount">$2,250</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1" id="avgAmount">$2,000</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center"><span class="text-2xl">📊</span></div>
                 </div>
@@ -94,8 +95,8 @@
             <div class="lg:col-span-1">
                 <div class="glass rounded-2xl shadow-lg p-6 sticky top-4">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-bold text-gray-800">➕ 新增客户</h2>
-                        <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">* 必填</span>
+                        <h2 class="text-lg font-bold text-gray-800" id="formTitle">➕ 新增客户</h2>
+                        <button onclick="resetForm()" class="text-gray-400 hover:text-gray-600 text-sm">🔄 新增模式</button>
                     </div>
                     
                     <form id="customerForm" class="space-y-4">
@@ -121,11 +122,9 @@
                                 <input type="text" id="region" list="regionList" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="搜索或输入">
                                 <datalist id="regionList">
                                     <option value="🌏 东南亚">
-                                    <option value="🇪🇺 欧洲">
-                                    <option value="🌍 中东">
+                                    <option value="🇪                                    <option value🇺 欧洲">
+="🌍 中东">
                                     <option value="🌎 南美洲">
-                                    <option value="🇺🇸 北美洲">
-                                    <option value="🇦🇺 大洋洲">
                                 </datalist>
                             </div>
                         </div>
@@ -205,7 +204,7 @@
                         <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                             <span>📜</span> 本周记录
                         </h2>
-                        <span id="recordCount" class="text-gray-500 text-sm">3 条</span>
+                        <span id="recordCount" class="text-gray-500 text-sm">2 条</span>
                     </div>
                     <div id="recordsList" class="divide-y divide-gray-100">
                         <div class="p-6 hover:bg-gray-50 transition-colors card-hover border-l-4 border-emerald-500">
@@ -285,31 +284,28 @@
             document.getElementById('statusUnreplied').style.opacity = status === 'unreplied' ? '100%' : '50%';
         }
 
-        function updateWeekInfo() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth() + 1;
-            const weekNum = Math.ceil(now.getDate() / 7);
-            document.getElementById('weekInfo').textContent = `📅 ${year}年${month}月 ${now.getMonth() + 1}月${now.getDate()}日-${now.getMonth() + 1}月${now.getDate() + 6}日（第${weekNum}周）`;
-        }
-
-        function refreshDemo() {
-            document.getElementById('lastSync').textContent = '已同步: ' + new Date().toLocaleTimeString();
-            document.getElementById('lastSync').className = 'text-green-400 text-sm';
-            showToast('✅ 同步成功 (' + allRecords.length + ' 条)', 'success');
-            filterRecords();
+        function resetForm() {
+            document.getElementById('customerForm').reset();
+            document.getElementById('formTitle').innerHTML = '➕ 新增客户';
+            document.getElementById('editRowIndex').value = '';
+            document.getElementById('phone').removeAttribute('readonly');
+            document.getElementById('phone').classList.remove('readonly-field');
+            setStatus('unreplied');
         }
 
         function editDemoRecord(phone) {
             const r = allRecords.find(rec => rec.phone === phone);
             if (!r) return;
             
+            document.getElementById('formTitle').innerHTML = '✏️ 编辑客户';
             document.getElementById('status').value = r.status || 'unreplied';
             setStatus(r.status || 'unreplied');
             document.getElementById('country').value = r.country || '';
             document.getElementById('region').value = r.region || '';
             document.getElementById('customerName').value = r.customerName || '';
             document.getElementById('phone').value = r.phone || '';
+            document.getElementById('phone').setAttribute('readonly', true);
+            document.getElementById('phone').classList.add('readonly-field');
             document.getElementById('email').value = r.email || '';
             document.getElementById('source').value = r.source || '';
             document.getElementById('background').value = r.background || '';
@@ -336,12 +332,8 @@
                 return match && matchStatus && matchRegion;
             });
             
-            renderRecords();
-            updateStats();
-        }
-
-        function renderRecords() {
             document.getElementById('recordCount').textContent = filteredRecords.length + ' 条';
+            updateStats();
         }
 
         function updateStats() {
@@ -377,9 +369,9 @@
                 return;
             }
 
-            const isEdit = document.getElementById('editRowIndex').value;
+            const isEdit = !!document.getElementById('editRowIndex').value;
             if (isEdit) {
-                const idx = allRecords.findIndex(r => r.phone === isEdit);
+                const idx = allRecords.findIndex(r => r.phone === document.getElementByById('editRowIndex').value);
                 if (idx !== -1) allRecords[idx] = { ...allRecords[idx], ...data };
                 showToast('✅ ' + data.customerName + ' 已更新！（预览）', 'success');
             } else {
@@ -387,10 +379,7 @@
                 showToast('✅ ' + data.customerName + ' 保存成功！（预览）', 'success');
             }
             
-            document.getElementById('customerForm').reset();
-            setStatus('unreplied');
-            document.getElementById('editRowIndex').value = '';
-            document.getElementById('submitBtn').innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg> 保存客户信息`;
+            resetForm();
             filterRecords();
         });
 
@@ -403,7 +392,13 @@
             setTimeout(() => { el.classList.add('translate-y-4', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); }, 3000);
         }
 
-        updateWeekInfo();
+        function refreshDemo() {
+            document.getElementById('lastSync').textContent = '已同步: ' + new Date().toLocaleTimeString();
+            document.getElementById('lastSync').className = 'text-green-400 text-sm';
+            showToast('✅ 同步成功 (' + allRecords.length + ' 条)', 'success');
+            filterRecords();
+        }
+
         filterRecords();
     </script>
 </body>
