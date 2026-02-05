@@ -301,17 +301,38 @@
             listEl.innerHTML = '<p class="text-gray-500 text-center py-12">🔄 同步中...</p>';
             
             try {
-                const response = await fetch(GAS_URL + '?action=list');
-                const result = await response.json();
+                // 先测试直接访问GAS
+                const testUrl = GAS_URL + '?action=list';
+                console.log('请求URL:', testUrl);
+                
+                const response = await fetch(testUrl);
+                console.log('响应状态:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                
+                const text = await response.text();
+                console.log('原始响应:', text.substring(0, 200));
+                
+                const result = JSON.parse(text);
                 
                 if (result.success) {
                     allRecords = result.records || [];
                     filterRecords();
                     updateStats();
                     showSyncStatus();
+                } else {
+                    listEl.innerHTML = `<p class="text-red-500 text-center py-12">⚠️ ${result.message || '加载失败'}</p>`;
                 }
             } catch (error) {
-                listEl.innerHTML = `<p class="text-red-500 text-center py-12">❌ 同步失败: ${error.message}</p>`;
+                console.error('同步错误:', error);
+                listEl.innerHTML = `
+                    <p class="text-red-500 text-center py-12">
+                        ❌ 同步失败<br>
+                        <span class="text-gray-400 text-sm">${error.message}</span><br>
+                        <span class="text-gray-400 text-xs">请确认：1) GAS访问权限为"任何人" 2) Sheet存在数据</span>
+                    </p>`;
             }
         }
 
