@@ -210,10 +210,25 @@
 
         function updateWeekInfo() {
             const now = new Date();
-            const year = now.getFullYear();
+            const weekInfo = getWeekInfo(now);
+            document.getElementById('weekInfo').textContent = `📅 ${weekInfo} · 本周数据`;
+        }
+
+        function getWeekInfo(date) {
+            const year = date.getFullYear();
             const start = new Date(year, 0, 1);
-            const weekNum = Math.floor((now - start) / (1000 * 60 * 60 * 24 * 7)) + 1;
-            document.getElementById('weekInfo').textContent = `📅 ${year}-W${weekNum.toString().padStart(2, '0')} · 本周数据`;
+            const diff = date - start;
+            const weekNum = Math.floor(diff / (1000 * 60 * 60 * 24 * 7)) + 1;
+            
+            const weekStart = new Date(date);
+            weekStart.setDate(date.getDate() - date.getDay() + 1);
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            
+            const startStr = weekStart.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+            const endStr = weekEnd.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+            
+            return `${year}年2月 ${startStr}-${endStr}（第${weekNum}周）`;
         }
 
         async function loadRecords() {

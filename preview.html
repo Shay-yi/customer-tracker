@@ -27,7 +27,7 @@
                     <h1 class="text-2xl font-bold flex items-center gap-2">
                         <span class="text-3xl">📋</span> 客户记录系统
                     </h1>
-                    <p class="text-white/80 text-sm mt-1">📅 2026-W05 · 预览版</p>
+                    <p class="text-white/80 text-sm mt-1">📅 2026年2月 2月5日-2月11日（第5周） · 预览版</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <button onclick="refreshDemo()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
@@ -198,7 +198,7 @@
                                 </div>
                                 <div class="text-right">
                                     <p class="text-2xl font-bold text-emerald-500">$2,000</p>
-                                    <p class="text-xs text-gray-400 mt-1">今天</p>
+                                    <p class="text-xs text-gray-400 mt-1">${getRelativeTime(new Date())}</p>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +220,7 @@
                                 </div>
                                 <div class="text-right">
                                     <p class="text-2xl font-bold text-emerald-500">$1,500</p>
-                                    <p class="text-xs text-gray-400 mt-1">昨天</p>
+                                    <p class="text-xs text-gray-400 mt-1">${getRelativeTime(Date.now() - 86400000)}</p>
                                 </div>
                             </div>
                         </div>
@@ -242,7 +242,7 @@
                                 </div>
                                 <div class="text-right">
                                     <p class="text-2xl font-bold text-emerald-500">$1,000</p>
-                                    <p class="text-xs text-gray-400 mt-1">周一</p>
+                                    <p class="text-xs text-gray-400 mt-1">${getRelativeTime(Date.now() - 172800000)}</p>
                                 </div>
                             </div>
                         </div>
@@ -262,6 +262,32 @@
             { time: new Date(Date.now() - 172800000), phone: '+61-400-1111', country: 'Australia', region: 'Sydney', customerName: 'FitLife Center', source: 'Google搜索', background: '健身房', details: '咨询家用健身器材', amount: 1000 }
         ];
         let filteredRecords = [];
+
+        function getWeekInfo(date) {
+            const year = date.getFullYear();
+            const weekStart = new Date(date);
+            weekStart.setDate(date.getDate() - date.getDay() + 1);
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            
+            const startStr = weekStart.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+            const endStr = weekEnd.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+            
+            return `${year}年 ${startStr}-${endStr}`;
+        }
+
+        function getRelativeTime(dateStr) {
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) return '今天';
+            if (diffDays === 1) return '昨天';
+            if (diffDays === 2) return '前天';
+            if (diffDays < 7) return diffDays + '天前';
+            
+            return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             filterRecords();
