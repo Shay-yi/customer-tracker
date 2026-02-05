@@ -10,6 +10,28 @@ function doPost(e) {
     const sheetName = getWeekSheetName();
     const sheet = getOrCreateSheet(sheetName);
     
+    // 删除记录
+    if (action === 'delete') {
+      const rowIndex = findPhone(data.phone, sheet);
+      if (rowIndex === -1) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ 
+            success: false, 
+            message: '未找到该记录' 
+          }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      sheet.deleteRow(rowIndex);
+      
+      return ContentService
+        .createTextOutput(JSON.stringify({ 
+          success: true, 
+          message: '✅ 已删除记录' 
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
     // 更新记录
     if (action === 'update') {
       const rowIndex = findPhone(data.originalPhone || data.phone, sheet);

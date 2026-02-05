@@ -304,8 +304,10 @@
             
             const sorted = [...filteredRecords].sort((a, b) => new Date(b.time) - new Date(a.time));
             
-            // 直接使用 filteredRecords 中的索引
-            listEl.innerHTML = sorted.map((r, idx) => `
+            // 直接使用 filteredRecords 中的索引（传入记录对象而非索引）
+            listEl.innerHTML = sorted.map((r) => {
+                const originalIdx = filteredRecords.indexOf(r);
+                return `
                 <div class="record-item p-4 ${r.status === 'replied' ? 'replied' : 'unreplied'} fade-in">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
@@ -326,11 +328,15 @@
                         <div class="text-right ml-4">
                             <p class="font-bold ${r.status === 'replied' ? 'text-emerald-600' : 'text-zinc-400'}">$${(r.amount || 0).toLocaleString()}</p>
                             <p class="text-xs text-zinc-400 mt-1.5">${formatDate(r.time)}</p>
-                            <button onclick="editFromFiltered(${idx})" class="text-xs text-zinc-500 hover:text-zinc-800 mt-2 font-medium">编辑</button>
+                            <div class="flex items-center justify-end gap-3 mt-2">
+                                <button onclick="editFromFiltered(${originalIdx})" class="text-xs text-zinc-500 hover:text-zinc-800 font-medium">编辑</button>
+                                <button onclick="deleteFromFiltered(${originalIdx})" class="text-xs text-red-400 hover:text-red-600 font-medium">删除</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // 从筛选后的列表编辑（避免电话匹配问题）
@@ -401,6 +407,45 @@
             }
             
             showToast('编辑: ' + r.customerName);
+        }
+
+        // 从筛选后的列表删除
+        function deleteFromFiltered(idx) {
+            const r = filteredRecords[idx];
+            if (!r) {
+                showToast('记录不存在', 'error');
+                return;
+            }
+            
+            if (!confirm('确定要删除客户 ' + r.customerName + ' 吗？此操作不可恢复。')) {
+                return;
+            }
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '删除中...';
+            btn.disabled = true;
+            
+            fetch(GAS_URL + '?action=delete', {
+                method: 'POST',
+                body: JSON.stringify({ phone: r.phone })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showToast('已删除: ' + r.customerName);
+                    refreshData();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            })
+            .catch(error => {
+                showToast(error.message, 'error');
+            })
+            .finally(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            });
         }
 
         function updateStats() {
