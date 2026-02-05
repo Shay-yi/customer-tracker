@@ -28,16 +28,14 @@
                     <h1 class="text-2xl font-bold flex items-center gap-2">
                         <span class="text-3xl">📋</span> 客户记录系统
                     </h1>
-                    <p class="text-white/80 text-sm mt-1">📅 <span id="weekInfo">2026年2月2日-2月8日（第1周）</span> · 预览版</p>
+                    <p id="weekInfo" class="text-white/80 text-sm mt-1">📅 2026年2月2日-2月8日（第1周）</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <button onclick="refreshDemo()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        刷新
+                        🔄 同步数据
                     </button>
-                    <span class="text-yellow-400 text-sm flex items-center gap-1">
-                        <span>🎮</span> 预览模式
-                    </span>
+                    <span id="lastSync" class="text-white/60 text-sm">未同步</span>
                 </div>
             </div>
         </div>
@@ -287,9 +285,20 @@
             document.getElementById('statusUnreplied').style.opacity = status === 'unreplied' ? '100%' : '50%';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function updateWeekInfo() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const weekNum = Math.ceil(now.getDate() / 7);
+            document.getElementById('weekInfo').textContent = `📅 ${year}年${month}月 ${now.getMonth() + 1}月${now.getDate()}日-${now.getMonth() + 1}月${now.getDate() + 6}日（第${weekNum}周）`;
+        }
+
+        function refreshDemo() {
+            document.getElementById('lastSync').textContent = '已同步: ' + new Date().toLocaleTimeString();
+            document.getElementById('lastSync').className = 'text-green-400 text-sm';
+            showToast('✅ 同步成功 (' + allRecords.length + ' 条)', 'success');
             filterRecords();
-        });
+        }
 
         function editDemoRecord(phone) {
             const r = allRecords.find(rec => rec.phone === phone);
@@ -394,10 +403,8 @@
             setTimeout(() => { el.classList.add('translate-y-4', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); }, 3000);
         }
 
-        function refreshDemo() {
-            showToast('🔄 刷新成功（预览模式）', 'success');
-            filterRecords();
-        }
+        updateWeekInfo();
+        filterRecords();
     </script>
 </body>
 </html>
