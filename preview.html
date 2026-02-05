@@ -27,7 +27,7 @@
                     <h1 class="text-2xl font-bold flex items-center gap-2">
                         <span class="text-3xl">📋</span> 客户记录系统
                     </h1>
-                    <p class="text-white/80 text-sm mt-1">📅 <span id="weekInfo">2026年2月2日-2月8日（第6周）</span> · 预览版</p>
+                    <p class="text-white/80 text-sm mt-1">📅 <span id="weekInfo">2026年2月2日-2月8日（第1周）</span> · 预览版</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <button onclick="refreshDemo()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
@@ -265,38 +265,21 @@
 
         function getWeekInfo(date) {
             const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            
+            const monthStart = new Date(year, date.getMonth(), 1);
+            const dayOfMonth = date.getDate();
+            const weekNum = Math.ceil(dayOfMonth / 7);
             
             const weekStart = new Date(date);
             weekStart.setDate(date.getDate() - date.getDay() + 1);
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
             
-            const yearStart = new Date(year, 0, 1);
-            const firstMonday = new Date(yearStart);
-            while (firstMonday.getDay() !== 1) {
-                firstMonday.setDate(firstMonday.getDate() + 1);
-            }
-            
-            const diffDays = Math.floor((weekStart - firstMonday) / (1000 * 60 * 60 * 24));
-            const weekNum = Math.floor(diffDays / 7) + 2;
-            
-            const currentYear = weekStart.getFullYear();
-            if (weekStart < firstMonday && currentYear === year - 1) {
-                const lastYearStart = new Date(year - 1, 0, 1);
-                const lastYearFirstMonday = new Date(lastYearStart);
-                while (lastYearFirstMonday.getDay() !== 1) {
-                    lastYearFirstMonday.setDate(lastYearFirstMonday.getDate() + 1);
-                }
-                const lastYearLastMonday = new Date(new Date(year, 0, 1));
-                lastYearLastMonday.setDate(lastYearLastMonday.getDate() - 1);
-                const lastYearWeekNum = Math.floor((lastYearLastMonday - lastYearFirstMonday) / (1000 * 60 * 60 * 24 * 7)) + 2;
-                return `${year-1}年 ${formatMonthDay(lastYearLastMonday)}-${formatMonthDay(firstMonday)}（第${lastYearWeekNum}周）`;
-            }
-            
             const startStr = `${formatMonthDay(weekStart)}`;
             const endStr = `${formatMonthDay(weekEnd)}`;
             
-            return `${year}年 ${startStr}-${endStr}（第${weekNum}周）`;
+            return `${year}年${month}月 ${startStr}-${endStr}（第${weekNum}周）`;
         }
 
         function formatMonthDay(date) {
