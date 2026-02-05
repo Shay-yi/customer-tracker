@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>客户记录系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/google-libphonenumber/3.2.31/libphonenumber.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:400;500;600;700&family=Space+Grotesk:700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -132,7 +133,7 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-zinc-600 mb-1.5">电话 *</label>
-                                <input type="tel" id="phone" required class="input w-full px-3 py-2.5 rounded-lg" placeholder="必填">
+                                <input type="tel" id="phone" onblur="detectPhoneCountry()" required class="input w-full px-3 py-2.5 rounded-lg" placeholder="必填">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-zinc-600 mb-1.5">邮箱</label>
@@ -219,6 +220,65 @@
             document.getElementById('status').value = status;
             document.getElementById('statusReplied').className = 'status-btn flex-1 ' + (status === 'replied' ? 'status-replied' : 'status-inactive');
             document.getElementById('statusUnreplied').className = 'status-btn flex-1 ' + (status === 'unreplied' ? 'status-unreplied' : 'status-inactive');
+        }
+
+        // 国家区号到区域映射
+        const countryRegionMap = {
+            'CN': '东南亚', 'SG': '东南亚', 'MY': '东南亚', 'TH': '东南亚', 'VN': '东南亚', 'ID': '东南亚', 'PH': '东南亚',
+            'US': '北美洲', 'CA': '北美洲', 'MX': '北美洲',
+            'GB': '欧洲', 'DE': '欧洲', 'FR': '欧洲', 'IT': '欧洲', 'ES': '欧洲', 'NL': '欧洲', 'BE': '欧洲', 'PL': '欧洲',
+            'AE': '中东', 'SA': '中东', 'QA': '中东', 'KW': '中东', 'BH': '中东',
+            'BR': '南美洲', 'AR': '南美洲', 'CL': '南美洲', 'CO': '南美洲', 'PE': '南美洲',
+            'AU': '大洋洲', 'NZ': '大洋洲',
+            'IN': '南亚', 'PK': '南亚', 'BD': '南亚', 'LK': '南亚',
+            'ZA': '非洲', 'NG': '非洲', 'EG': '非洲', 'KE': '非洲', 'MA': '非洲',
+            'JP': '东亚', 'KR': '东亚', 'TW': '东亚', 'HK': '东亚'
+        };
+
+        // 国家区号到国家名映射
+        const countryCodeMap = {
+            'CN': 'China', 'SG': 'Singapore', 'MY': 'Malaysia', 'TH': 'Thailand', 'VN': 'Vietnam', 'ID': 'Indonesia', 'PH': 'Philippines',
+            'US': 'USA', 'CA': 'Canada', 'MX': 'Mexico',
+            'GB': 'UK', 'DE': 'Germany', 'FR': 'France', 'IT': 'Italy', 'ES': 'Spain', 'NL': 'Netherlands', 'BE': 'Belgium', 'PL': 'Poland',
+            'AE': 'UAE', 'SA': 'Saudi Arabia', 'Qatar': 'Qatar', 'KW': 'Kuwait', 'BH': 'Bahrain',
+            'BR': 'Brazil', 'AR': 'Argentina', 'CL': 'Chile', 'CO': 'Colombia', 'PE': 'Peru',
+            'AU': 'Australia', 'NZ': 'New Zealand',
+            'IN': 'India', 'PK': 'Pakistan', 'BD': 'Bangladesh', 'LK': 'Sri Lanka',
+            'ZA': 'South Africa', 'NG': 'Nigeria', 'EG': 'Egypt', 'KE': 'Kenya', 'MA': 'Morocco',
+            'JP': 'Japan', 'KR': 'South Korea', 'TW': 'Taiwan', 'HK': 'Hong Kong'
+        };
+
+        // 自动识别电话国家
+        function detectPhoneCountry() {
+            const phoneInput = document.getElementById('phone');
+            const countryInput = document.getElementById('country');
+            const regionInput = document.getElementById('region');
+            
+            const phone = phoneInput.value.trim();
+            if (!phone || phone.length < 5) return;
+            
+            try {
+                const phoneNumber = libphonenumber.parsePhoneNumber(phone);
+                
+                if (phoneNumber && phoneNumber.isValid()) {
+                    const countryCode = phoneNumber.country;
+                    const countryName = countryCodeMap[countryCode] || countryCode;
+                    
+                    // 自动填入国家
+                    if (!countryInput.value) {
+                        countryInput.value = countryName;
+                    }
+                    
+                    // 自动填入区域
+                    if (!regionInput.value && countryRegionMap[countryCode]) {
+                        regionInput.value = countryRegionMap[countryCode];
+                    }
+                    
+                    console.log('识别到: ' + countryName + ', 区域: ' + countryRegionMap[countryCode]);
+                }
+            } catch (e) {
+                console.log('电话解析失败:', e.message);
+            }
         }
 
         function updateWeekInfo() {
