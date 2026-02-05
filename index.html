@@ -7,182 +7,151 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1); }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .input-focus { transition: all 0.2s; }
-        .input-focus:focus { box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
-        .btn-primary { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .btn-primary:hover { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
-        .status-yes { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .status-no { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .readonly-field { background-color: #f3f4f6; cursor: not-allowed; }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f5f5f5; }
+        .card { background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; }
+        .card:hover { border-color: #10b981; }
+        .btn { border-radius: 8px; transition: all 0.2s; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .input { border-radius: 8px; transition: all 0.2s; }
+        .input:focus { border-color: #10b981; }
+        .status-btn { border-radius: 8px; }
+        .status-btn.replied { background: #10b981; }
+        .status-btn.unreplied { background: #f59e0b; }
+        .record-item { border-left: 3px solid #e5e5e5; transition: all 0.2s; }
+        .record-item.replied { border-left-color: #10b981; }
+        .record-item.unreplied { border-left-color: #f59e0b; }
+        .record-item:hover { background: #fafafa; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <header class="gradient-bg text-white py-6 shadow-lg">
-        <div class="container mx-auto px-4 max-w-6xl">
+<body class="bg-[#f5f5f5] min-h-screen">
+    <header class="bg-white border-b border-gray-200 py-4">
+        <div class="container mx-auto px-6 max-w-6xl">
             <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold flex items-center gap-2">
-                        <span class="text-3xl">📋</span> 客户记录系统
-                    </h1>
-                    <p id="weekInfo" class="text-white/80 text-sm mt-1">📅 2026年2月2日-2月8日（第1周）</p>
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">📋</span>
+                    <h1 class="text-xl font-semibold text-gray-800">客户记录系统</h1>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button onclick="refreshData()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
+                    <button onclick="refreshData()" class="btn bg-gray-100 hover:bg-gray-200 px-4 py-2 text-sm flex items-center gap-2 text-gray-700">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        🔄 同步数据
+                        同步数据
                     </button>
-                    <span id="lastSync" class="text-white/60 text-sm">未同步</span>
+                    <span id="lastSync" class="text-sm text-gray-400">未同步</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-            <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">本周客户</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1" id="totalCount">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center"><span class="text-2xl">👥</span></div>
-                </div>
+    <div class="container mx-auto px-6 py-8 max-w-6xl">
+        <div class="flex items-center gap-2 mb-6">
+            <span class="text-gray-500 text-sm" id="weekInfo">📅 2026年2月2日-2月8日</span>
+        </div>
+
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <div class="card p-5">
+                <p class="text-gray-500 text-sm">本周客户</p>
+                <p class="text-3xl font-semibold text-gray-800 mt-1" id="totalCount">0</p>
             </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">已回复</p>
-                        <p class="text-3xl font-bold text-emerald-500 mt-1" id="repliedCount">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center"><span class="text-2xl">✅</span></div>
-                </div>
+            <div class="card p-5">
+                <p class="text-gray-500 text-sm">已回复</p>
+                <p class="text-3xl font-semibold text-emerald-500 mt-1" id="repliedCount">0</p>
             </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">未回复</p>
-                        <p class="text-3xl font-bold text-amber-500 mt-1" id="unrepliedCount">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center"><span class="text-2xl">⏳</span></div>
-                </div>
+            <div class="card p-5">
+                <p class="text-gray-500 text-sm">未回复</p>
+                <p class="text-3xl font-semibold text-amber-500 mt-1" id="unrepliedCount">0</p>
             </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">成单金额</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1" id="totalAmount">$0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center"><span class="text-2xl">💰</span></div>
-                </div>
-            </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">平均金额</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1" id="avgAmount">$0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center"><span class="text-2xl">📊</span></div>
-                </div>
+            <div class="card p-5">
+                <p class="text-gray-500 text-sm">成单金额</p>
+                <p class="text-3xl font-semibold text-gray-800 mt-1" id="totalAmount">$0</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-1">
-                <div class="glass rounded-2xl shadow-lg p-6 sticky top-4">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-bold text-gray-800" id="formTitle">➕ 新增客户</h2>
-                        <button onclick="resetForm()" class="text-gray-400 hover:text-gray-600 text-sm">🔄 新增模式</button>
+                <div class="card p-6 sticky top-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-medium text-gray-800" id="formTitle">新增客户</h2>
+                        <button onclick="resetForm()" class="text-gray-400 hover:text-gray-600 text-sm">重置</button>
                     </div>
                     
                     <form id="customerForm" class="space-y-4">
-                        <div class="flex gap-3 mb-4">
-                            <button type="button" onclick="setStatus('replied')" id="statusReplied" class="status-yes flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-50">
-                                ✅ 已回复
+                        <div class="flex gap-2 mb-4">
+                            <button type="button" onclick="setStatus('replied')" id="statusReplied" class="status-btn flex-1 py-2.5 text-white text-sm font-medium opacity-50">
+                                已回复
                             </button>
-                            <button type="button" onclick="setStatus('unreplied')" id="statusUnreplied" class="status-no flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-100">
-                                ⏳ 未回复
+                            <button type="button" onclick="setStatus('unreplied')" id="statusUnreplied" class="status-btn unreplied flex-1 py-2.5 text-white text-sm font-medium opacity-100">
+                                未回复
                             </button>
                         </div>
                         <input type="hidden" id="status" value="unreplied">
                         <input type="hidden" id="editRowIndex" value="">
                         
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">🌍 国家 *</label>
-                                <input type="text" id="country" list="countryList" required class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="搜索或输入">
+                                <label class="block text-sm text-gray-600 mb-1">国家 *</label>
+                                <input type="text" id="country" list="countryList" required class="input w-full px-3 py-2.5 bg-gray-50 border border-gray-200" placeholder="国家">
                                 <datalist id="countryList"></datalist>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">📍 区域</label>
-                                <input type="text" id="region" list="regionList" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="搜索或输入">
+                                <label class="block text-sm text-gray-600 mb-1">区域</label>
+                                <input type="text" id="region" list="regionList" class="input w-full px-3 py-2.5 bg-gray-50 border border-gray-200" placeholder="区域">
                                 <datalist id="regionList">
-                                    <option value="🌏 东南亚">
-                                    <option value="🇪🇺 欧洲">
-                                    <option value="🌍 中东">
-                                    <option value="🌎 南美洲">
-                                    <option value="🇺🇸 北美洲">
-                                    <option value="🇦🇺 大洋洲">
-                                    <option value="🇦🇫 南亚">
-                                    <option value="🌍 非洲">
+                                    <option value="东南亚">
+                                    <option value="欧洲">
+                                    <option value="中东">
+                                    <option value="南美洲">
+                                    <option value="北美洲">
+                                    <option value="大洋洲">
                                 </datalist>
                             </div>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">👤 客户名称 *</label>
-                            <input type="text" id="customerName" required class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="公司或个人名称">
+                            <label class="block text-sm text-gray-600 mb-1">客户名称 *</label>
+                            <input type="text" id="customerName" required class="input w-full px-3 py-2.5 bg-gray-50 border border-gray-200" placeholder="公司或个人名称">
                         </div>
                         
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">📞 电话 *</label>
-                                <input type="tel" id="phone" required class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="必填">
+                                <label class="block text-sm text-gray-600 mb-1">电话 *</label>
+                                <input type="tel" id="phone" required class="input w-full px-3 py-2.5 bg-gray-50 border border-gray-200" placeholder="必填">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">📧 邮箱</label>
-                                <input type="email" id="email" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="可选">
+                                <label class="block text-sm text-gray-600 mb-1">邮箱</label>
+                                <input type="email" id="email" class="input w-full px-3 py-2.5 bg-gray-50 border border-gray-200" placeholder="可选">
                             </div>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">📢 获客途径</label>
-                            <input type="text" id="source" list="sourceList" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="搜索或输入">
+                            <label class="block text-sm text-gray-600 mb-1">获客途径</label>
+                            <input type="text" id="source" list="sourceList" class="input w-full px-3 py-2.5 bg-gray-50 border border-gray-200" placeholder="来源">
                             <datalist id="sourceList">
-                                <option value="🛒 Alibaba">
-                                <option value="🏭 Made-in-China">
-                                <option value="🔍 Google搜索">
-                                <option value="🎪 展会">
-                                <option value="📱 社交媒体">
-                                <option value="🤝 老客户推荐">
-                                <option value="📞 电话营销">
-                                <option value="📰 B2B平台">
-                                <option value="🌐 官网询盘">
-                                <option value="📌 其他">
+                                <option value="Alibaba">
+                                <option value="Made-in-China">
+                                <option value="Google搜索">
+                                <option value="展会">
+                                <option value="社交媒体">
+                                <option value="老客户推荐">
                             </datalist>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">🏢 客户背景</label>
-                            <input type="text" id="background" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="如：健身房、经销商">
+                            <label class="block text-sm text-gray-600 mb-1">客户背景</label>
+                            <input type="text" id="background" class="input w-full px-3 py-2.5 bg-gray-50 border border-gray-200" placeholder="如：健身房">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">💰 成单金额 (USD)</label>
-                            <input type="number" id="amount" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="0">
+                            <label class="block text-sm text-gray-600 mb-1">成单金额 (USD)</label>
+                            <input type="number" id="amount" class="input w-full px-3 py-2.5 bg-gray-50 border border-gray-200" placeholder="0">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">📝 具体需求</label>
-                            <textarea id="details" rows="2" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus resize-none" placeholder="客户的具体需求..."></textarea>
+                            <label class="block text-sm text-gray-600 mb-1">具体需求</label>
+                            <textarea id="details" rows="2" class="input w-full px-3 py-2.5 bg-gray-50 border border-gray-200 resize-none" placeholder="需求描述"></textarea>
                         </div>
                         
-                        <button type="submit" id="submitBtn" class="btn-primary w-full py-4 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                        <button type="submit" id="submitBtn" class="btn w-full py-3 bg-emerald-500 text-white font-medium flex items-center justify-center gap-2">
                             保存客户信息
                         </button>
                     </form>
@@ -190,48 +159,38 @@
             </div>
             
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap gap-4">
-                    <div class="flex-1 min-w-[200px] relative">
-                        <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        <input type="text" id="searchInput" oninput="filterRecords()" placeholder="搜索客户名称、电话..." class="w-full pl-12 pr-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
-                    </div>
-                    <select id="statusFilter" onchange="filterRecords()" class="px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
+                <div class="card p-4 mb-4 flex gap-3">
+                    <input type="text" id="searchInput" oninput="filterRecords()" placeholder="搜索客户名称、电话..." class="input flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200">
+                    <select id="statusFilter" onchange="filterRecords()" class="input px-4 py-2.5 bg-gray-50 border border-gray-200">
                         <option value="">全部状态</option>
-                        <option value="replied">✅ 已回复</option>
-                        <option value="unreplied">⏳ 未回复</option>
-                    </select>
-                    <select id="regionFilter" onchange="filterRecords()" class="px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
-                        <option value="">全部区域</option>
-                        <option value="东南亚">🌏 东南亚</option>
-                        <option value="欧洲">🇪🇺 欧洲</option>
+                        <option value="replied">已回复</option>
+                        <option value="unreplied">未回复</option>
                     </select>
                 </div>
                 
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                        <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <span>📜</span> 本周记录
-                        </h2>
-                        <span id="recordCount" class="text-gray-500 text-sm">0 条</span>
+                <div class="card">
+                    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="text-lg font-medium text-gray-800">本周记录</h2>
+                        <span id="recordCount" class="text-sm text-gray-400">0 条</span>
                     </div>
                     <div id="recordsList" class="divide-y divide-gray-100">
-                        <p class="text-gray-500 text-center py-12">🔄 点击"同步数据"获取最新...</p>
+                        <p class="text-gray-400 text-center py-12">点击"同步数据"获取最新...</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-6 right-6 hidden transform transition-all duration-300 translate-y-4 opacity-0"></div>
+    <div id="toast" class="fixed bottom-6 right-6 hidden px-4 py-2 rounded-lg shadow text-sm"></div>
 
     <script>
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbyVIUjpgIo4nCg1_HVubQ4h5ZOvmbkOZaungg6DpMN9fZLbY1adPlabArM6V1C_L5duNA/exec';
         let allRecords = [];
         let filteredRecords = [];
         
-        const regionOptions = ['🌏 东南亚', '🇪🇺 欧洲', '🌍 中东', '🌎 南美洲', '🇺🇸 北美洲', '🇦🇺 大洋洲', '🇦🇫 南亚', '🌍 非洲'];
-        const sourceOptions = ['🛒 Alibaba', '🏭 Made-in-China', '🔍 Google搜索', '🎪 展会', '📱 社交媒体', '🤝 老客户推荐', '📞 电话营销', '📰 B2B平台', '🌐 官网询盘', '📌 其他'];
-        const countryOptions = ['USA', 'UK', 'Germany', 'France', 'Australia', 'Canada', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Thailand', 'Vietnam', 'Indonesia', 'Philippines', 'UAE', 'Saudi Arabia', 'Turkey', 'Brazil', 'Mexico', 'Argentina', 'India', 'Russia', 'Italy', 'Spain', 'Netherlands'];
+        const regionOptions = ['东南亚', '欧洲', '中东', '南美洲', '北美洲', '大洋洲', '南亚', '非洲'];
+        const sourceOptions = ['Alibaba', 'Made-in-China', 'Google搜索', '展会', '社交媒体', '老客户推荐'];
+        const countryOptions = ['USA', 'UK', 'Germany', 'France', 'Australia', 'Canada', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Thailand', 'Vietnam', 'Indonesia', 'UAE', 'Brazil'];
         
         document.getElementById('regionList').innerHTML = regionOptions.map(r => `<option value="${r}">`).join('');
         document.getElementById('sourceList').innerHTML = sourceOptions.map(s => `<option value="${s}">`).join('');
@@ -239,26 +198,22 @@
 
         function setStatus(status) {
             document.getElementById('status').value = status;
-            document.getElementById('statusReplied').style.opacity = status === 'replied' ? '100%' : '50%';
-            document.getElementById('statusUnreplied').style.opacity = status === 'unreplied' ? '100%' : '50%';
+            document.getElementById('statusReplied').className = 'status-btn flex-1 py-2.5 text-white text-sm font-medium ' + (status === 'replied' ? 'replied opacity-100' : 'opacity-50');
+            document.getElementById('statusUnreplied').className = 'status-btn flex-1 py-2.5 text-white text-sm font-medium ' + (status === 'unreplied' ? 'unreplied opacity-100' : 'opacity-50');
         }
 
         function updateWeekInfo() {
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth() + 1;
-            const dayOfMonth = now.getDate();
-            const weekNum = Math.ceil(dayOfMonth / 7);
+            const day = now.getDate();
             const weekStart = new Date(now);
             weekStart.setDate(now.getDate() - now.getDay() + 1);
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
-            const startStr = `${weekStart.getMonth() + 1}月${weekStart.getDate()}日`;
-            const endStr = `${weekEnd.getMonth() + 1}月${weekEnd.getDate()}日`;
-            document.getElementById('weekInfo').textContent = `📅 ${year}年${month}月 ${startStr}-${endStr}（第${weekNum}周）`;
+            document.getElementById('weekInfo').textContent = `${year}年${month}月 ${weekStart.getDate()}-${weekEnd.getDate()}日`;
         }
 
-        // 从 localStorage 加载数据
         function loadFromStorage() {
             const saved = localStorage.getItem('customerRecords');
             if (saved) {
@@ -266,10 +221,8 @@
                     allRecords = JSON.parse(saved);
                     filterRecords();
                     document.getElementById('lastSync').textContent = '本地缓存';
-                    document.getElementById('lastSync').className = 'text-yellow-400 text-sm';
-                } catch (e) {
-                    console.error('读取本地数据失败:', e);
-                }
+                    document.getElementById('lastSync').className = 'text-sm text-amber-500';
+                } catch (e) {}
             }
         }
 
@@ -279,11 +232,11 @@
 
         function refreshData() {
             const listEl = document.getElementById('recordsList');
-            listEl.innerHTML = '<p class="text-gray-500 text-center py-12">🔄 同步中...</p>';
+            listEl.innerHTML = '<p class="text-gray-400 text-center py-12">同步中...</p>';
             
             const btn = document.querySelector('button[onclick="refreshData()"]');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<span class="animate-spin">🔄</span> 同步中...';
+            btn.innerHTML = '同步中...';
             
             fetch(GAS_URL + '?action=list')
                 .then(response => response.json())
@@ -292,18 +245,17 @@
                         allRecords = result.records || [];
                         saveToStorage();
                         filterRecords();
-                        const now = new Date();
-                        document.getElementById('lastSync').textContent = '已同步: ' + now.toLocaleTimeString();
-                        document.getElementById('lastSync').className = 'text-green-400 text-sm';
-                        showToast('✅ 同步成功 (' + allRecords.length + ' 条)', 'success');
+                        document.getElementById('lastSync').textContent = '已同步';
+                        document.getElementById('lastSync').className = 'text-sm text-emerald-500';
+                        showToast('同步成功 (' + allRecords.length + ' 条)');
                     } else {
-                        listEl.innerHTML = `<p class="text-red-500 text-center py-12">⚠️ ${result.message || '同步失败'}</p>`;
-                        showToast('⚠️ ' + (result.message || '同步失败'), 'warning');
+                        listEl.innerHTML = '<p class="text-red-500 text-center py-12">' + (result.message || '同步失败') + '</p>';
+                        showToast(result.message || '同步失败', 'error');
                     }
                 })
                 .catch(error => {
-                    listEl.innerHTML = `<p class="text-red-500 text-center py-12">❌ 同步失败: ${error.message}</p>`;
-                    showToast('❌ ' + error.message, 'error');
+                    listEl.innerHTML = '<p class="text-red-500 text-center py-12">同步失败: ' + error.message + '</p>';
+                    showToast(error.message, 'error');
                 })
                 .finally(() => {
                     btn.innerHTML = originalHTML;
@@ -313,16 +265,11 @@
         function filterRecords() {
             const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
             const statusFilter = document.getElementById('statusFilter').value;
-            const regionFilter = document.getElementById('regionFilter').value;
             
             filteredRecords = allRecords.filter(r => {
-                const match = !keyword || 
-                    r.customerName.toLowerCase().includes(keyword) ||
-                    r.phone.includes(keyword) ||
-                    (r.country && r.country.toLowerCase().includes(keyword));
+                const match = !keyword || r.customerName.toLowerCase().includes(keyword) || r.phone.includes(keyword);
                 const matchStatus = !statusFilter || r.status === statusFilter;
-                const matchRegion = !regionFilter || (r.region && r.region.includes(regionFilter));
-                return match && matchStatus && matchRegion;
+                return match && matchStatus;
             });
             
             renderRecords();
@@ -334,37 +281,34 @@
             document.getElementById('recordCount').textContent = filteredRecords.length + ' 条';
             
             if (filteredRecords.length === 0) {
-                listEl.innerHTML = '<div class="text-center py-12"><span class="text-4xl">📭</span><p class="text-gray-500 mt-2">暂无记录</p></div>';
+                listEl.innerHTML = '<p class="text-gray-400 text-center py-12">暂无记录</p>';
                 return;
             }
             
             const sorted = [...filteredRecords].sort((a, b) => new Date(b.time) - new Date(a.time));
             
-            listEl.innerHTML = sorted.map((r) => `
-                <div class="p-6 hover:bg-gray-50 transition-colors card-hover border-l-4 ${r.status === 'replied' ? 'border-emerald-500' : 'border-amber-500'}">
+            listEl.innerHTML = sorted.map(r => `
+                <div class="record-item p-4 ${r.status === 'replied' ? 'replied' : 'unreplied'}">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2 flex-wrap">
-                                <span class="font-bold text-lg text-gray-800">${r.customerName}</span>
-                                ${r.status === 'replied' ? '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs">✅ 已回复</span>' : '<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs">⏳ 未回复</span>'}
-                                ${r.country ? `<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">${r.country}</span>` : ''}
-                                ${r.region ? `<span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">${r.region}</span>` : ''}
-                                ${r.source ? `<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">${r.source}</span>` : ''}
+                            <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                <span class="font-medium text-gray-800">${r.customerName}</span>
+                                <span class="text-xs px-2 py-0.5 rounded ${r.status === 'replied' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${r.status === 'replied' ? '已回复' : '未回复'}</span>
+                                ${r.country ? '<span class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">' + r.country + '</span>' : ''}
+                                ${r.region ? '<span class="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-600">' + r.region + '</span>' : ''}
                             </div>
-                            <div class="flex flex-wrap gap-4 text-sm text-gray-500">
-                                <span class="flex items-center gap-1">📞 ${r.phone}</span>
-                                ${r.email ? `<span class="flex items-center gap-1">📧 ${r.email}</span>` : ''}
-                                ${r.background ? `<span class="flex items-center gap-1">🏢 ${r.background}</span>` : ''}
+                            <div class="text-sm text-gray-500 flex flex-wrap gap-3">
+                                <span>📞 ${r.phone}</span>
+                                ${r.email ? '<span>📧 ' + r.email + '</span>' : ''}
+                                ${r.background ? '<span>🏢 ' + r.background + '</span>' : ''}
+                                ${r.source ? '<span>📢 ' + r.source + '</span>' : ''}
                             </div>
-                            ${r.details ? `<p class="text-gray-400 text-sm mt-2">📝 ${r.details}</p>` : ''}
+                            ${r.details ? '<p class="text-sm text-gray-400 mt-1">' + r.details + '</p>' : ''}
                         </div>
                         <div class="text-right">
-                            <p class="text-2xl font-bold ${r.status === 'replied' ? 'text-emerald-500' : 'text-gray-400'}">$${(r.amount || 0).toLocaleString()}</p>
+                            <p class="font-semibold ${r.status === 'replied' ? 'text-emerald-500' : 'text-gray-400'}">$${(r.amount || 0).toLocaleString()}</p>
                             <p class="text-xs text-gray-400 mt-1">${formatDate(r.time)}</p>
-                            <button onclick="editRecord('${r.phone}')" class="mt-2 text-blue-500 hover:text-blue-700 text-sm flex items-center gap-1 justify-end">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                编辑
-                            </button>
+                            <button onclick="editRecord('${r.phone}')" class="text-xs text-blue-500 hover:text-blue-700 mt-2">编辑</button>
                         </div>
                     </div>
                 </div>
@@ -373,19 +317,17 @@
 
         function resetForm() {
             document.getElementById('customerForm').reset();
-            document.getElementById('formTitle').innerHTML = '➕ 新增客户';
+            document.getElementById('formTitle').textContent = '新增客户';
             document.getElementById('editRowIndex').value = '';
-            document.getElementById('phone').removeAttribute('readonly');
-            document.getElementById('phone').classList.remove('readonly-field');
             setStatus('unreplied');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('submitBtn').innerHTML = '保存客户信息';
         }
 
         function editRecord(phone) {
             const r = allRecords.find(rec => rec.phone === phone);
             if (!r) return;
             
-            document.getElementById('formTitle').innerHTML = '✏️ 编辑客户';
+            document.getElementById('formTitle').textContent = '编辑客户';
             document.getElementById('status').value = r.status || 'unreplied';
             setStatus(r.status || 'unreplied');
             document.getElementById('country').value = r.country || '';
@@ -399,30 +341,23 @@
             document.getElementById('details').value = r.details || '';
             document.getElementById('editRowIndex').value = r.phone;
             
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> 更新记录';
-            
+            document.getElementById('submitBtn').innerHTML = '更新记录';
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            showToast('✏️ 正在编辑: ' + r.customerName, 'success');
+            showToast('编辑: ' + r.customerName);
         }
 
         function updateStats() {
             document.getElementById('totalCount').textContent = filteredRecords.length;
-            const replied = filteredRecords.filter(r => r.status === 'replied').length;
-            const unreplied = filteredRecords.filter(r => r.status !== 'replied').length;
-            document.getElementById('repliedCount').textContent = replied;
-            document.getElementById('unrepliedCount').textContent = unreplied;
+            document.getElementById('repliedCount').textContent = filteredRecords.filter(r => r.status === 'replied').length;
+            document.getElementById('unrepliedCount').textContent = filteredRecords.filter(r => r.status !== 'replied').length;
             
             const total = filteredRecords.filter(r => r.status === 'replied').reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
             document.getElementById('totalAmount').textContent = '$' + total.toLocaleString();
-            
-            const avg = replied > 0 ? Math.round(total / replied) : 0;
-            document.getElementById('avgAmount').textContent = '$' + avg.toLocaleString();
         }
 
         function formatDate(dateStr) {
             const d = new Date(dateStr);
-            return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
         }
 
         document.getElementById('customerForm').addEventListener('submit', async (e) => {
@@ -443,14 +378,14 @@
             };
 
             if (!data.phone || !data.country || !data.customerName) {
-                showToast('❌ 请填写必填字段', 'error');
+                showToast('请填写必填字段', 'error');
                 return;
             }
 
             const btn = document.getElementById('submitBtn');
             const isEdit = !!data.originalPhone;
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="animate-pulse">💾 保存中...</span>';
+            btn.innerHTML = '保存中...';
             btn.disabled = true;
 
             try {
@@ -462,15 +397,15 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showToast('✅ ' + result.message, 'success');
+                    showToast(result.message);
                     resetForm();
                     refreshData();
                 } else {
-                    showToast('⚠️ ' + result.message, result.existing ? 'warning' : 'error');
+                    showToast(result.message, result.existing ? 'warning' : 'error');
                     if (result.existing) refreshData();
                 }
             } catch (error) {
-                showToast('❌ ' + error.message, 'error');
+                showToast(error.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
@@ -479,14 +414,12 @@
 
         function showToast(msg, type = 'success') {
             const el = document.getElementById('toast');
-            const colors = { success: 'bg-emerald-500 text-white', error: 'bg-red-500 text-white', warning: 'bg-yellow-500 text-white' };
             el.textContent = msg;
-            el.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 ${colors[type]}`;
-            el.classList.remove('hidden', 'translate-y-4', 'opacity-0');
-            setTimeout(() => { el.classList.add('translate-y-4', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); }, 3000);
+            el.className = 'fixed bottom-6 right-6 px-4 py-2 rounded-lg shadow text-sm ' + (type === 'success' ? 'bg-emerald-500 text-white' : type === 'error' ? 'bg-red-500 text-white' : 'bg-amber-500 text-white');
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 2500);
         }
 
-        // 初始化
         updateWeekInfo();
         loadFromStorage();
     </script>
