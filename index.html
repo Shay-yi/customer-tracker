@@ -22,7 +22,6 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
-    <!-- Header -->
     <header class="gradient-bg text-white py-6 shadow-lg">
         <div class="container mx-auto px-4 max-w-6xl">
             <div class="flex justify-between items-center">
@@ -44,7 +43,6 @@
     </header>
 
     <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <!-- Stats Cards -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
             <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
                 <div class="flex items-center justify-between">
@@ -94,7 +92,6 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Form -->
             <div class="lg:col-span-1">
                 <div class="glass rounded-2xl shadow-lg p-6 sticky top-4">
                     <div class="flex items-center justify-between mb-4">
@@ -103,7 +100,6 @@
                     </div>
                     
                     <form id="customerForm" class="space-y-4">
-                        <!-- 客户状态 -->
                         <div class="flex gap-3 mb-4">
                             <button type="button" onclick="setStatus('replied')" id="statusReplied" class="status-yes flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-50">
                                 ✅ 已回复
@@ -115,7 +111,6 @@
                         <input type="hidden" id="status" value="unreplied">
                         <input type="hidden" id="editRowIndex" value="">
                         
-                        <!-- 国家/区域 -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">🌍 国家 *</label>
@@ -138,13 +133,11 @@
                             </div>
                         </div>
                         
-                        <!-- 客户名称 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">👤 客户名称 *</label>
                             <input type="text" id="customerName" required class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="公司或个人名称">
                         </div>
                         
-                        <!-- 联系方式 -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">📞 电话 *</label>
@@ -156,7 +149,6 @@
                             </div>
                         </div>
                         
-                        <!-- 获客途径 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">📢 获客途径</label>
                             <input type="text" id="source" list="sourceList" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="搜索或输入">
@@ -174,19 +166,16 @@
                             </datalist>
                         </div>
                         
-                        <!-- 客户背景 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">🏢 客户背景</label>
                             <input type="text" id="background" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="如：健身房、经销商">
                         </div>
                         
-                        <!-- 成单金额 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">💰 成单金额 (USD)</label>
                             <input type="number" id="amount" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="0">
                         </div>
                         
-                        <!-- 具体需求 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">📝 具体需求</label>
                             <textarea id="details" rows="2" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus resize-none" placeholder="客户的具体需求..."></textarea>
@@ -200,9 +189,7 @@
                 </div>
             </div>
             
-            <!-- Records -->
             <div class="lg:col-span-2">
-                <!-- Search & Filter -->
                 <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap gap-4">
                     <div class="flex-1 min-w-[200px] relative">
                         <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -217,12 +204,9 @@
                         <option value="">全部区域</option>
                         <option value="东南亚">🌏 东南亚</option>
                         <option value="欧洲">🇪🇺 欧洲</option>
-                        <option value="中东">🌍 中东</option>
-                        <option value="南美洲">🌎 南美洲</option>
                     </select>
                 </div>
                 
-                <!-- Records List -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                     <div class="p-6 border-b border-gray-100 flex justify-between items-center">
                         <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -231,14 +215,13 @@
                         <span id="recordCount" class="text-gray-500 text-sm">0 条</span>
                     </div>
                     <div id="recordsList" class="divide-y divide-gray-100">
-                        <p class="text-gray-500 text-center py-12">🔄 点击上方"同步数据"按钮获取最新数据...</p>
+                        <p class="text-gray-500 text-center py-12">🔄 点击"同步数据"获取最新...</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
     <div id="toast" class="fixed bottom-6 right-6 hidden transform transition-all duration-300 translate-y-4 opacity-0"></div>
 
     <script>
@@ -266,16 +249,32 @@
             const month = now.getMonth() + 1;
             const dayOfMonth = now.getDate();
             const weekNum = Math.ceil(dayOfMonth / 7);
-            
             const weekStart = new Date(now);
             weekStart.setDate(now.getDate() - now.getDay() + 1);
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
-            
             const startStr = `${weekStart.getMonth() + 1}月${weekStart.getDate()}日`;
             const endStr = `${weekEnd.getMonth() + 1}月${weekEnd.getDate()}日`;
-            
             document.getElementById('weekInfo').textContent = `📅 ${year}年${month}月 ${startStr}-${endStr}（第${weekNum}周）`;
+        }
+
+        // 从 localStorage 加载数据
+        function loadFromStorage() {
+            const saved = localStorage.getItem('customerRecords');
+            if (saved) {
+                try {
+                    allRecords = JSON.parse(saved);
+                    filterRecords();
+                    document.getElementById('lastSync').textContent = '本地缓存';
+                    document.getElementById('lastSync').className = 'text-yellow-400 text-sm';
+                } catch (e) {
+                    console.error('读取本地数据失败:', e);
+                }
+            }
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('customerRecords', JSON.stringify(allRecords));
         }
 
         function refreshData() {
@@ -291,8 +290,8 @@
                 .then(result => {
                     if (result.success) {
                         allRecords = result.records || [];
+                        saveToStorage();
                         filterRecords();
-                        updateStats();
                         const now = new Date();
                         document.getElementById('lastSync').textContent = '已同步: ' + now.toLocaleTimeString();
                         document.getElementById('lastSync').className = 'text-green-400 text-sm';
@@ -335,13 +334,13 @@
             document.getElementById('recordCount').textContent = filteredRecords.length + ' 条';
             
             if (filteredRecords.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-12"><span class="text-4xl">📭</span><p class="text-gray-500 mt-2">暂无记录</p></div>`;
+                listEl.innerHTML = '<div class="text-center py-12"><span class="text-4xl">📭</span><p class="text-gray-500 mt-2">暂无记录</p></div>';
                 return;
             }
             
             const sorted = [...filteredRecords].sort((a, b) => new Date(b.time) - new Date(a.time));
             
-            listEl.innerHTML = sorted.map((r, i) => `
+            listEl.innerHTML = sorted.map((r) => `
                 <div class="p-6 hover:bg-gray-50 transition-colors card-hover border-l-4 ${r.status === 'replied' ? 'border-emerald-500' : 'border-amber-500'}">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
@@ -362,7 +361,7 @@
                         <div class="text-right">
                             <p class="text-2xl font-bold ${r.status === 'replied' ? 'text-emerald-500' : 'text-gray-400'}">$${(r.amount || 0).toLocaleString()}</p>
                             <p class="text-xs text-gray-400 mt-1">${formatDate(r.time)}</p>
-                            <button onclick="editRecord(${i})" class="mt-2 text-blue-500 hover:text-blue-700 text-sm flex items-center gap-1 justify-end">
+                            <button onclick="editRecord('${r.phone}')" class="mt-2 text-blue-500 hover:text-blue-700 text-sm flex items-center gap-1 justify-end">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                 编辑
                             </button>
@@ -382,8 +381,9 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function editRecord(index) {
-            const r = filteredRecords[index];
+        function editRecord(phone) {
+            const r = allRecords.find(rec => rec.phone === phone);
+            if (!r) return;
             
             document.getElementById('formTitle').innerHTML = '✏️ 编辑客户';
             document.getElementById('status').value = r.status || 'unreplied';
@@ -392,20 +392,18 @@
             document.getElementById('region').value = r.region || '';
             document.getElementById('customerName').value = r.customerName || '';
             document.getElementById('phone').value = r.phone || '';
-            document.getElementById('phone').setAttribute('readonly', true); // 编辑时电话只读
+            document.getElementById('phone').setAttribute('readonly', true);
             document.getElementById('phone').classList.add('readonly-field');
             document.getElementById('email').value = r.email || '';
             document.getElementById('source').value = r.source || '';
             document.getElementById('background').value = r.background || '';
             document.getElementById('amount').value = r.amount || '';
             document.getElementById('details').value = r.details || '';
-            document.getElementById('editRowIndex').value = r.phone; // 用原电话作为标识
+            document.getElementById('editRowIndex').value = r.phone;
             
-            // 改变提交按钮
             const btn = document.getElementById('submitBtn');
-            btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> 更新记录`;
+            btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> 更新记录';
             
-            // 滚动到表单
             window.scrollTo({ top: 0, behavior: 'smooth' });
             showToast('✏️ 正在编辑: ' + r.customerName, 'success');
         }
@@ -452,7 +450,7 @@
             }
 
             const btn = document.getElementById('submitBtn');
-            const isEdit = !!data.originalPhone; // 有originalPhone就是编辑模式
+            const isEdit = !!data.originalPhone;
             const originalText = btn.innerHTML;
             btn.innerHTML = '<span class="animate-pulse">💾 保存中...</span>';
             btn.disabled = true;
@@ -492,6 +490,7 @@
 
         // 初始化
         updateWeekInfo();
+        loadFromStorage();
     </script>
 </body>
 </html>
