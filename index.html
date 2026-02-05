@@ -304,8 +304,8 @@
             
             const sorted = [...filteredRecords].sort((a, b) => new Date(b.time) - new Date(a.time));
             
-            // 使用 data-phone 属性存储电话号码，避免转义问题
-            listEl.innerHTML = sorted.map((r) => `
+            // 直接使用 filteredRecords 中的索引
+            listEl.innerHTML = sorted.map((r, idx) => `
                 <div class="record-item p-4 ${r.status === 'replied' ? 'replied' : 'unreplied'} fade-in">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
@@ -326,34 +326,17 @@
                         <div class="text-right ml-4">
                             <p class="font-bold ${r.status === 'replied' ? 'text-emerald-600' : 'text-zinc-400'}">$${(r.amount || 0).toLocaleString()}</p>
                             <p class="text-xs text-zinc-400 mt-1.5">${formatDate(r.time)}</p>
-                            <button class="edit-btn text-xs text-zinc-500 hover:text-zinc-800 mt-2 font-medium" data-phone="${r.phone}">编辑</button>
+                            <button onclick="editFromFiltered(${idx})" class="text-xs text-zinc-500 hover:text-zinc-800 mt-2 font-medium">编辑</button>
                         </div>
                     </div>
                 </div>
             `).join('');
-            
-            // 绑定编辑按钮事件
-            listEl.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const phone = this.getAttribute('data-phone');
-                    editRecord(phone);
-                });
-            });
         }
 
-        function resetForm() {
-            document.getElementById('customerForm').reset();
-            document.getElementById('formTitle').textContent = '新增客户';
-            document.getElementById('editRowIndex').value = '';
-            setStatus('unreplied');
-            document.getElementById('submitBtn').innerHTML = '保存客户信息';
-        }
-
-        function editRecord(phone) {
-            // 使用精确匹配
-            const r = allRecords.find(rec => rec.phone === phone);
+        // 从筛选后的列表编辑（避免电话匹配问题）
+        function editFromFiltered(idx) {
+            const r = filteredRecords[idx];
             if (!r) {
-                console.error('找不到记录:', phone);
                 showToast('记录不存在', 'error');
                 return;
             }
@@ -376,15 +359,46 @@
             
             document.getElementById('submitBtn').innerHTML = '更新记录';
             
-            // 滚动到表单
             const formSection = document.querySelector('.card.p-6');
             if (formSection) {
                 formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                formSection.style.borderColor = '#10b981';
+                setTimeout(() => { formSection.style.borderColor = '#e4e4e7'; }, 2000);
             }
             
-            // 高亮表单
-            formSection.style.borderColor = '#10b981';
-            setTimeout(() => { formSection.style.borderColor = '#e4e4e7'; }, 2000);
+            showToast('编辑: ' + r.customerName);
+        }
+
+        function editRecord(phone) {
+            // 保留原函数以兼容
+            const r = allRecords.find(rec => rec.phone === phone);
+            if (!r) {
+                showToast('记录不存在', 'error');
+                return;
+            }
+            
+            document.getElementById('formTitle').textContent = '编辑客户';
+            document.getElementById('status').value = r.status || 'unreplied';
+            setStatus(r.status || 'unreplied');
+            document.getElementById('country').value = r.country || '';
+            document.getElementById('region').value = r.region || '';
+            document.getElementById('customerName').value = r.customerName || '';
+            document.getElementById('phone').value = r.phone || '';
+            document.getElementById('email').value = r.email || '';
+            document.getElementById('source').value = r.source || '';
+            document.getElementById('background').value = r.background || '';
+            document.getElementById('amount').value = r.amount || '';
+            document.getElementById('details').value = r.details || '';
+            document.getElementById('editRowIndex').value = r.phone;
+            
+            document.getElementById('submitBtn').innerHTML = '更新记录';
+            
+            const formSection = document.querySelector('.card.p-6');
+            if (formSection) {
+                formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                formSection.style.borderColor = '#10b981';
+                setTimeout(() => { formSection.style.borderColor = '#e4e4e7'; }, 2000);
+            }
             
             showToast('编辑: ' + r.customerName);
         }
