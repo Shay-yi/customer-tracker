@@ -7,80 +7,214 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">📋 客户记录系统</h1>
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <h1 class="text-3xl font-bold text-center mb-2 text-gray-800">📋 客户记录系统</h1>
+        <p id="weekInfo" class="text-center text-gray-500 mb-8">本周：2026-W05</p>
         
-        <!-- 表单 -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
-            <form id="customerForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">📞 电话号码 *</label>
-                        <input type="tel" id="phone" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="请输入电话号码">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 表单区域 -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-4">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">➕ 新增客户</h2>
+                    <form id="customerForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">📞 电话 *</label>
+                            <input type="tel" id="phone" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="必填">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">🌍 国家 *</label>
+                            <input type="text" id="country" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="如：USA">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">📍 区域</label>
+                            <input type="text" id="region" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">👤 客户名称 *</label>
+                            <input type="text" id="customerName" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="必填">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">📢 获客途径</label>
+                            <select id="source" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                                <option value="">请选择</option>
+                                <option value="Alibaba">Alibaba</option>
+                                <option value="Made-in-China">Made-in-China</option>
+                                <option value="Google搜索">Google搜索</option>
+                                <option value="展会">展会</option>
+                                <option value="社交媒体">社交媒体</option>
+                                <option value="老客户推荐">老客户推荐</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">🏢 客户背景</label>
+                            <input type="text" id="background" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="如：健身房">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">📝 具体需求</label>
+                            <textarea id="details" rows="2" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder=""></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">💰 成单金额</label>
+                            <input type="number" id="amount" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="0">
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-500 text-white py-3 rounded-lg font-bold hover:bg-emerald-600 transition-colors">
+                            💾 保存
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 记录列表区域 -->
+            <div class="lg:col-span-2">
+                <!-- 提示消息 -->
+                <div id="message" class="hidden p-4 rounded-lg mb-4"></div>
+                
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-xl shadow p-4 text-center">
+                        <p class="text-3xl font-bold text-emerald-500" id="totalCount">0</p>
+                        <p class="text-gray-500 text-sm">本周客户</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">🌍 国家 *</label>
-                        <input type="text" id="country" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="如：USA">
+                    <div class="bg-white rounded-xl shadow p-4 text-center">
+                        <p class="text-3xl font-bold text-blue-500" id="totalAmount">$0</p>
+                        <p class="text-gray-500 text-sm">成单金额</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">📍 区域</label>
-                        <input type="text" id="region" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="如：California">
+                    <div class="bg-white rounded-xl shadow p-4 text-center">
+                        <p class="text-3xl font-bold text-purple-500" id="sourceCount">0</p>
+                        <p class="text-gray-500 text-sm">获客渠道</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">👤 客户名称 *</label>
-                        <input type="text" id="customerName" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="客户公司或个人名称">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">📢 获客途径</label>
-                        <select id="source" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                            <option value="">请选择</option>
-                            <option value="Alibaba">Alibaba</option>
-                            <option value="Made-in-China">Made-in-China</option>
-                            <option value="Google搜索">Google搜索</option>
-                            <option value="展会">展会</option>
-                            <option value="社交媒体">社交媒体</option>
-                            <option value="老客户推荐">老客户推荐</option>
-                            <option value="其他">其他</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">🏢 客户背景</label>
-                        <input type="text" id="background" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="如：健身房、经销商等">
+                    <div class="bg-white rounded-xl shadow p-4 text-center">
+                        <button onclick="loadRecords()" class="text-blue-500 hover:text-blue-700 text-sm">
+                            🔄 刷新同步
+                        </button>
                     </div>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">📝 具体需求</label>
-                    <textarea id="details" rows="3" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="客户的具体需求..."></textarea>
+                <!-- 搜索 -->
+                <div class="bg-white rounded-xl shadow p-4 mb-6">
+                    <input type="text" id="searchInput" oninput="filterRecords()" placeholder="🔍 搜索客户名称、电话或国家..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">💰 成单金额 (USD)</label>
-                    <input type="number" id="amount" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="0">
+                <!-- 记录列表 -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-800">📜 本周记录</h2>
+                        <span id="recordCount" class="text-gray-500 text-sm">0 条</span>
+                    </div>
+                    <div id="recordsList" class="space-y-3">
+                        <p class="text-gray-500 text-center py-8">加载中...</p>
+                    </div>
                 </div>
-                
-                <button type="submit" class="w-full bg-emerald-500 text-white py-3 rounded-lg font-bold hover:bg-emerald-600 transition-colors">
-                    💾 保存客户信息
-                </button>
-            </form>
-        </div>
-        
-        <!-- 提示消息 -->
-        <div id="message" class="hidden p-4 rounded-lg mb-4"></div>
-        
-        <!-- 最近记录 -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h2 class="text-xl font-bold mb-4 text-gray-800">📜 本周记录</h2>
-            <div id="recordsList" class="space-y-3">
-                <p class="text-gray-500 text-center py-4">暂无记录</p>
             </div>
         </div>
     </div>
 
     <script>
-        // 配置你的 GAS Web App URL
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwtBYl3LNMhsVYrgLMmFWu1XEt--MydD-tpgl0LKZPJwxLtP2p1cHiZUeorEyIzQsb7/exec';
+        let allRecords = [];
 
+        // 页面加载时获取记录
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecords();
+            updateWeekInfo();
+        });
+
+        function updateWeekInfo() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const start = new Date(year, 0, 1);
+            const diff = now - start;
+            const weekNum = Math.floor(diff / (1000 * 60 * 60 * 24 * 7)) + 1;
+            document.getElementById('weekInfo').textContent = `📅 本周：${year}-W${weekNum.toString().padStart(2, '0')}`;
+        }
+
+        // 加载记录
+        async function loadRecords() {
+            const listEl = document.getElementById('recordsList');
+            listEl.innerHTML = '<p class="text-gray-500 text-center py-8">🔄 同步中...</p>';
+            
+            try {
+                const response = await fetch(GAS_URL + '?action=list');
+                const result = await response.json();
+                
+                if (result.success) {
+                    allRecords = result.records;
+                    updateWeekInfo();
+                    renderRecords(allRecords);
+                    updateStats(allRecords);
+                } else {
+                    listEl.innerHTML = '<p class="text-red-500 text-center py-8">加载失败</p>';
+                }
+            } catch (error) {
+                listEl.innerHTML = '<p class="text-red-500 text-center py-8">同步失败: ' + error.message + '</p>';
+            }
+        }
+
+        // 渲染记录列表
+        function renderRecords(records) {
+            const listEl = document.getElementById('recordsList');
+            document.getElementById('recordCount').textContent = records.length + ' 条';
+            
+            if (records.length === 0) {
+                listEl.innerHTML = '<p class="text-gray-500 text-center py-8">暂无记录</p>';
+                return;
+            }
+            
+            // 按时间倒序
+            const sorted = [...records].sort((a, b) => new Date(b.time) - new Date(a.time));
+            
+            listEl.innerHTML = sorted.map((r, i) => `
+                <div class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <span class="font-bold text-lg text-gray-800">${r.customerName}</span>
+                            <span class="text-gray-500 ml-2">${r.country}</span>
+                        </div>
+                        <span class="text-emerald-500 font-bold">$${r.amount || 0}</span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-600">
+                        <p>📞 ${r.phone}</p>
+                        <p>📍 ${r.region || '-'}</p>
+                        <p>📢 ${r.source || '-'}</p>
+                        <p>🏢 ${r.background || '-'}</p>
+                    </div>
+                    ${r.details ? `<p class="text-gray-500 text-sm mt-2">📝 ${r.details}</p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 更新统计
+        function updateStats(records) {
+            document.getElementById('totalCount').textContent = records.length;
+            
+            const total = records.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            document.getElementById('totalAmount').textContent = '$' + total.toLocaleString();
+            
+            const sources = new Set(records.filter(r => r.source).map(r => r.source));
+            document.getElementById('sourceCount').textContent = sources.size;
+        }
+
+        // 搜索过滤
+        function filterRecords() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!keyword) {
+                renderRecords(allRecords);
+                return;
+            }
+            
+            const filtered = allRecords.filter(r => 
+                r.customerName.toLowerCase().includes(keyword) ||
+                r.phone.includes(keyword) ||
+                r.country.toLowerCase().includes(keyword) ||
+                (r.region && r.region.toLowerCase().includes(keyword))
+            );
+            
+            renderRecords(filtered);
+        }
+
+        // 提交表单
         document.getElementById('customerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -100,6 +234,10 @@
                 return;
             }
 
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = '💾 保存中...';
+
             try {
                 const response = await fetch(GAS_URL, {
                     method: 'POST',
@@ -111,27 +249,36 @@
                 if (result.success) {
                     showMessage(result.message, 'success');
                     document.getElementById('customerForm').reset();
-                    loadRecords();
+                    loadRecords(); // 重新加载数据
                 } else {
-                    showMessage(result.message, 'error');
+                    showMessage(result.message, result.existing ? 'warning' : 'error');
+                    if (result.existing) {
+                        loadRecords(); // 已存在也刷新列表
+                    }
                 }
             } catch (error) {
                 showMessage('提交失败: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 保存';
             }
         });
 
         function showMessage(msg, type) {
             const el = document.getElementById('message');
             el.textContent = msg;
-            el.className = `p-4 rounded-lg mb-4 ${type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+            const colors = {
+                success: 'bg-green-100 text-green-700',
+                error: 'bg-red-100 text-red-700',
+                warning: 'bg-yellow-100 text-yellow-700'
+            };
+            el.className = `p-4 rounded-lg mb-4 ${colors[type] || colors.success}`;
             el.classList.remove('hidden');
             setTimeout(() => el.classList.add('hidden'), 5000);
         }
 
-        async function loadRecords() {
-            // 加载本周记录
-            console.log('加载记录...');
-        }
+        // 每30秒自动同步
+        setInterval(loadRecords, 30000);
     </script>
 </body>
 </html>
