@@ -59,8 +59,8 @@
             <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-500 text-sm">已恢复</p>
-                        <p class="text-3xl font-bold text-emerald-500 mt-1" id="recoveredCount">2</p>
+                        <p class="text-gray-500 text-sm">已回复</p>
+                        <p class="text-3xl font-bold text-emerald-500 mt-1" id="repliedCount">2</p>
                     </div>
                     <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center"><span class="text-2xl">✅</span></div>
                 </div>
@@ -68,8 +68,8 @@
             <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-500 text-sm">未恢复</p>
-                        <p class="text-3xl font-bold text-amber-500 mt-1" id="pendingCount">1</p>
+                        <p class="text-gray-500 text-sm">未回复</p>
+                        <p class="text-3xl font-bold text-amber-500 mt-1" id="unrepliedCount">1</p>
                     </div>
                     <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center"><span class="text-2xl">⏳</span></div>
                 </div>
@@ -106,14 +106,14 @@
                     <form id="customerForm" class="space-y-4">
                         <!-- 客户状态 -->
                         <div class="flex gap-3 mb-4">
-                            <button type="button" onclick="setStatus('recovered')" id="statusRecovered" class="status-yes flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-50">
-                                ✅ 已恢复
+                            <button type="button" onclick="setStatus('replied')" id="statusRecovered" class="status-yes flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-50">
+                                ✅ 已回复
                             </button>
-                            <button type="button" onclick="setStatus('pending')" id="statusPending" class="status-no flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-100">
-                                ⏳ 未恢复
+                            <button type="button" onclick="setStatus('unreplied')" id="statusPending" class="status-no flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-100">
+                                ⏳ 未回复
                             </button>
                         </div>
-                        <input type="hidden" id="status" value="pending">
+                        <input type="hidden" id="status" value="unreplied">
                         
                         <!-- 国家/区域 -->
                         <div class="grid grid-cols-2 gap-4">
@@ -210,8 +210,8 @@
                     </div>
                     <select id="statusFilter" onchange="filterRecords()" class="px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
                         <option value="">全部状态</option>
-                        <option value="recovered">✅ 已恢复</option>
-                        <option value="pending">⏳ 未恢复</option>
+                        <option value="replied">✅ 已回复</option>
+                        <option value="unreplied">⏳ 未回复</option>
                     </select>
                     <select id="regionFilter" onchange="filterRecords()" class="px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
                         <option value="">全部区域</option>
@@ -237,7 +237,7 @@
                                 <div class="flex-1">
                                     <div class="flex items-center gap-3 mb-2 flex-wrap">
                                         <span class="font-bold text-lg text-gray-800">ABC Fitness Gym</span>
-                                        <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs">✅ 已恢复</span>
+                                        <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs">✅ 已回复</span>
                                         <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">USA</span>
                                         <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">🌏 东南亚</span>
                                     </div>
@@ -260,7 +260,7 @@
                                 <div class="flex-1">
                                     <div class="flex items-center gap-3 mb-2 flex-wrap">
                                         <span class="font-bold text-lg text-gray-800">John's Gym</span>
-                                        <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs">✅ 已恢复</span>
+                                        <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs">✅ 已回复</span>
                                         <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">UK</span>
                                         <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">🇪🇺 欧洲</span>
                                     </div>
@@ -283,7 +283,7 @@
                                 <div class="flex-1">
                                     <div class="flex items-center gap-3 mb-2 flex-wrap">
                                         <span class="font-bold text-lg text-gray-800">FitLife Center</span>
-                                        <span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs">⏳ 未恢复</span>
+                                        <span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs">⏳ 未回复</span>
                                         <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">Australia</span>
                                         <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">🇦🇺 大洋洲</span>
                                     </div>
@@ -318,16 +318,16 @@
         document.getElementById('countryList').innerHTML = countryOptions.map(c => `<option value="${c}">`).join('');
 
         let allRecords = [
-            { time: new Date(), status: 'recovered', phone: '+1-555-1234', email: 'john@gym.com', country: 'USA', region: '🌏 东南亚', customerName: 'ABC Fitness Gym', source: '🤝 老客户推荐', background: '健身房', details: '需要20台健身器材，包括跑步机、哑铃等', amount: 2000 },
-            { time: new Date(Date.now() - 86400000), status: 'recovered', phone: '+44-777-8888', email: 'sales@gym.uk', country: 'UK', region: '🇪🇺 欧洲', customerName: "John's Gym", source: '🛒 Alibaba', background: '经销商', details: '批量采购商用健身设备', amount: 1500 },
-            { time: new Date(Date.now() - 172800000), status: 'pending', phone: '+61-400-1111', email: '', country: 'Australia', region: '🇦🇺 大洋洲', customerName: 'FitLife Center', source: '🔍 Google搜索', background: '健身房', details: '咨询家用健身器材，还在考虑中', amount: 0 }
+            { time: new Date(), status: 'replied', phone: '+1-555-1234', email: 'john@gym.com', country: 'USA', region: '🌏 东南亚', customerName: 'ABC Fitness Gym', source: '🤝 老客户推荐', background: '健身房', details: '需要20台健身器材，包括跑步机、哑铃等', amount: 2000 },
+            { time: new Date(Date.now() - 86400000), status: 'replied', phone: '+44-777-8888', email: 'sales@gym.uk', country: 'UK', region: '🇪🇺 欧洲', customerName: "John's Gym", source: '🛒 Alibaba', background: '经销商', details: '批量采购商用健身设备', amount: 1500 },
+            { time: new Date(Date.now() - 172800000), status: 'unreplied', phone: '+61-400-1111', email: '', country: 'Australia', region: '🇦🇺 大洋洲', customerName: 'FitLife Center', source: '🔍 Google搜索', background: '健身房', details: '咨询家用健身器材，还在考虑中', amount: 0 }
         ];
         let filteredRecords = [];
 
         function setStatus(status) {
             document.getElementById('status').value = status;
-            document.getElementById('statusRecovered').style.opacity = status === 'recovered' ? '100%' : '50%';
-            document.getElementById('statusPending').style.opacity = status === 'pending' ? '100%' : '50%';
+            document.getElementById('statusRecovered').style.opacity = status === 'replied' ? '100%' : '50%';
+            document.getElementById('statusPending').style.opacity = status === 'unreplied' ? '100%' : '50%';
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -364,14 +364,14 @@
 
         function updateStats() {
             document.getElementById('totalCount').textContent = filteredRecords.length;
-            const recovered = filteredRecords.filter(r => r.status === 'recovered').length;
-            const pending = filteredRecords.filter(r => r.status !== 'recovered').length;
-            document.getElementById('recoveredCount').textContent = recovered;
-            document.getElementById('pendingCount').textContent = pending;
+            const replied = filteredRecords.filter(r => r.status === 'replied').length;
+            const unreplied = filteredRecords.filter(r => r.status !== 'replied').length;
+            document.getElementById('repliedCount').textContent = replied;
+            document.getElementById('unrepliedCount').textContent = unreplied;
             
-            const total = filteredRecords.filter(r => r.status === 'recovered').reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            const total = filteredRecords.filter(r => r.status === 'replied').reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
             document.getElementById('totalAmount').textContent = '$' + total.toLocaleString();
-            const avg = recovered > 0 ? Math.round(total / recovered) : 0;
+            const avg = replied > 0 ? Math.round(total / replied) : 0;
             document.getElementById('avgAmount').textContent = '$' + avg.toLocaleString();
         }
 
@@ -403,10 +403,10 @@
             }
 
             allRecords.unshift(data);
-            const statusText = data.status === 'recovered' ? '✅ 已恢复' : '⏳ 未恢复';
+            const statusText = data.status === 'replied' ? '✅ 已回复' : '⏳ 未回复';
             showToast('✅ ' + data.customerName + ' (' + statusText + ') 保存成功！（预览）', 'success');
             document.getElementById('customerForm').reset();
-            setStatus('pending');
+            setStatus('unreplied');
             filterRecords();
         });
 
