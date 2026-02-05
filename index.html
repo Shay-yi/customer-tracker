@@ -311,11 +311,13 @@
 
         function updateWeekInfo() {
             const now = new Date();
+            const year = now.getFullYear();
             const start = new Date(now);
             start.setDate(now.getDate() - now.getDay() + 1);
             const end = new Date(start);
             end.setDate(start.getDate() + 6);
-            document.getElementById('weekInfo').textContent = `${start.getMonth() + 1}月${start.getDate()}日 - ${end.getMonth() + 1}月${end.getDate()}日`;
+            const weekNum = Math.ceil(now.getDate() / 7);
+            document.getElementById('weekInfo').textContent = `${year}年${start.getMonth() + 1}月${start.getDate()}日 - ${end.getMonth() + 1}月${end.getDate()}日 第${weekNum}周`;
         }
 
         function loadFromStorage() {
