@@ -353,9 +353,12 @@
             // 使用精确匹配
             const r = allRecords.find(rec => rec.phone === phone);
             if (!r) {
+                console.error('找不到记录:', phone);
                 showToast('记录不存在', 'error');
                 return;
             }
+            
+            console.log('编辑记录:', r);
             
             document.getElementById('formTitle').textContent = '编辑客户';
             document.getElementById('status').value = r.status || 'unreplied';
@@ -372,7 +375,17 @@
             document.getElementById('editRowIndex').value = r.phone;
             
             document.getElementById('submitBtn').innerHTML = '更新记录';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // 滚动到表单
+            const formSection = document.querySelector('.card.p-6');
+            if (formSection) {
+                formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // 高亮表单
+            formSection.style.borderColor = '#10b981';
+            setTimeout(() => { formSection.style.borderColor = '#e4e4e7'; }, 2000);
+            
             showToast('编辑: ' + r.customerName);
         }
 
