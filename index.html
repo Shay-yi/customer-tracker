@@ -108,8 +108,35 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-zinc-600 mb-1.5">国家 *</label>
-                                <input type="text" id="country" list="countryList" required class="input w-full px-3 py-2.5 rounded-lg" placeholder="国家">
-                                <datalist id="countryList"></datalist>
+                                <select id="country" required class="input w-full px-3 py-2.5 rounded-lg bg-white">
+                                    <option value="">选择国家</option>
+                                    <option value="USA">🇺🇸 USA</option>
+                                    <option value="UK">🇬🇧 UK</option>
+                                    <option value="Germany">🇩🇪 Germany</option>
+                                    <option value="France">🇫🇷 France</option>
+                                    <option value="Australia">🇦🇺 Australia</option>
+                                    <option value="Canada">🇨🇦 Canada</option>
+                                    <option value="Japan">🇯🇵 Japan</option>
+                                    <option value="South Korea">🇰🇷 South Korea</option>
+                                    <option value="Singapore">🇸🇬 Singapore</option>
+                                    <option value="Malaysia">🇲🇾 Malaysia</option>
+                                    <option value="Thailand">🇹🇭 Thailand</option>
+                                    <option value="Vietnam">🇻🇳 Vietnam</option>
+                                    <option value="Indonesia">🇮🇩 Indonesia</option>
+                                    <option value="UAE">🇦🇪 UAE</option>
+                                    <option value="Brazil">🇧🇷 Brazil</option>
+                                    <option value="India">🇮🇳 India</option>
+                                    <option value="Mexico">🇲🇽 Mexico</option>
+                                    <option value="Spain">🇪🇸 Spain</option>
+                                    <option value="Italy">🇮🇹 Italy</option>
+                                    <option value="Netherlands">🇳🇱 Netherlands</option>
+                                    <option value="Russia">🇷🇺 Russia</option>
+                                    <option value="Turkey">🇹🇷 Turkey</option>
+                                    <option value="South Africa">🇿🇦 South Africa</option>
+                                    <option value="Egypt">🇪🇬 Egypt</option>
+                                    <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
+                                    <option value="Philippines">🇵🇭 Philippines</option>
+                                </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-zinc-600 mb-1.5">区域</label>
@@ -208,11 +235,9 @@
         
         const regionOptions = ['东南亚', '欧洲', '中东', '南美洲', '北美洲', '大洋洲', '南亚', '非洲'];
         const sourceOptions = ['Alibaba', 'Made-in-China', 'Google搜索', '展会', '社交媒体', '老客户推荐'];
-        const countryOptions = ['USA', 'UK', 'Germany', 'France', 'Australia', 'Canada', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Thailand', 'Vietnam', 'Indonesia', 'UAE', 'Brazil'];
         
         document.getElementById('regionList').innerHTML = regionOptions.map(r => `<option value="${r}">`).join('');
         document.getElementById('sourceList').innerHTML = sourceOptions.map(s => `<option value="${s}">`).join('');
-        document.getElementById('countryList').innerHTML = countryOptions.map(c => `<option value="${c}">`).join('');
 
         setStatus('unreplied');
 
