@@ -108,8 +108,8 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-zinc-600 mb-1.5">国家 *</label>
-                                <select id="country" required class="input w-full px-3 py-2.5 rounded-lg bg-white">
-                                    <option value="">选择国家</option>
+                                <input type="text" id="country" list="countryList" required class="input w-full px-3 py-2.5 rounded-lg" placeholder="选择或输入国家">
+                                <datalist id="countryList">
                                     <option value="USA">🇺🇸 USA</option>
                                     <option value="UK">🇬🇧 UK</option>
                                     <option value="Germany">🇩🇪 Germany</option>
@@ -136,7 +136,10 @@
                                     <option value="Egypt">🇪🇬 Egypt</option>
                                     <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
                                     <option value="Philippines">🇵🇭 Philippines</option>
-                                </select>
+                                    <option value="China">🇨🇳 China</option>
+                                    <option value="Hong Kong">🇭🇰 Hong Kong</option>
+                                    <option value="Taiwan">🇹🇼 Taiwan</option>
+                                </datalist>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-zinc-600 mb-1.5">区域</label>
