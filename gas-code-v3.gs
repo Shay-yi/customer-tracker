@@ -1,14 +1,53 @@
-// Google Apps Script - 客户记录系统 V2
+// Google Apps Script - 客户记录系统 V3
 
 const SHEET_ID = '1nooJ3DgN4P3EWFjynwBPIlc9uOZMekfpzi6_32WcJB8';
 
 function doPost(e) {
   const data = JSON.parse(e.postData.contents);
+  const action = e.parameter.action;
   
   try {
     const sheetName = getWeekSheetName();
     const sheet = getOrCreateSheet(sheetName);
     
+    // 更新记录
+    if (action === 'update') {
+      const rowIndex = findPhone(data.originalPhone || data.phone, sheet);
+      if (rowIndex === -1) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ 
+            success: false, 
+            message: '未找到该记录' 
+          }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      const timestamp = new Date();
+      const statusText = data.status === 'replied' ? '✅ 已回复' : '⏳ 未回复';
+      
+      sheet.getRange(rowIndex, 1, 1, 11).setValues([[
+        timestamp,
+        data.status || 'unreplied',
+        data.phone,
+        data.email || '',
+        data.country,
+        data.region || '',
+        data.customerName,
+        data.source || '',
+        data.background || '',
+        data.details || '',
+        data.amount || 0
+      ]]);
+      
+      return ContentService
+        .createTextOutput(JSON.stringify({ 
+          success: true, 
+          message: '✅ ' + data.customerName + ' (' + statusText + ') 已更新！' 
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // 新增记录
     const existingIndex = findPhone(data.phone, sheet);
     if (existingIndex !== -1) {
       return ContentService
@@ -24,17 +63,17 @@ function doPost(e) {
     const statusText = data.status === 'replied' ? '✅ 已回复' : '⏳ 未回复';
     
     sheet.appendRow([
-      timestamp,                           // A: 记录时间
-      data.status || 'unreplied',         // B: 状态
-      data.phone,                          // C: 电话
-      data.email || '',                   // D: 邮箱
-      data.country,                       // E: 国家
-      data.region || '',                  // F: 区域
-      data.customerName,                  // G: 客户名称
-      data.source || '',                  // H: 获客途径
-      data.background || '',              // I: 客户背景
-      data.details || '',                 // J: 具体需求
-      data.amount || 0                   // K: 成单金额
+      timestamp,
+      data.status || 'unreplied',
+      data.phone,
+      data.email || '',
+      data.country,
+      data.region || '',
+      data.customerName,
+      data.source || '',
+      data.background || '',
+      data.details || '',
+      data.amount || 0
     ]);
     
     return ContentService
@@ -105,9 +144,7 @@ function getWeekSheetName() {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
-  const dayOfMonth = now.getDate();
-  const weekNum = Math.ceil(dayOfMonth / 7);
-  return year + '年' + month + '月-W' + weekNum;
+  return year + '年' + month + '月-W' + Math.ceil(now.getDate() / 7);
 }
 
 function getOrCreateSheet(sheetName) {
@@ -116,9 +153,7 @@ function getOrCreateSheet(sheetName) {
   
   if (!sheet) {
     sheet = ss.insertSheet(sheetName);
-    sheet.appendRow([
-      '记录时间', '状态', '电话', '邮箱', '国家', '区域', '客户名称', '获客途径', '客户背景', '具体情况', '成单金额'
-    ]);
+    sheet.appendRow(['记录时间', '状态', '电话', '邮箱', '国家', '区域', '客户名称', '获客途径', '客户背景', '具体情况', '成单金额']);
     sheet.getRange('A1:K1').setFontWeight('bold').setBackground('#E5E7EB');
   }
   
@@ -128,7 +163,7 @@ function getOrCreateSheet(sheetName) {
 function findPhone(phone, sheet) {
   const data = sheet.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
-    if (data[i][2] == phone) return i + 1;
+    if (String(data[i][2]) === String(phone)) return i + 1;
   }
   return -1;
 }

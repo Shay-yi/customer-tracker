@@ -107,14 +107,15 @@
                     <form id="customerForm" class="space-y-4">
                         <!-- 客户状态 -->
                         <div class="flex gap-3 mb-4">
-                            <button type="button" onclick="setStatus('replied')" id="statusRecovered" class="status-yes flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-50">
+                            <button type="button" onclick="setStatus('replied')" id="statusReplied" class="status-yes flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-50">
                                 ✅ 已回复
                             </button>
-                            <button type="button" onclick="setStatus('unreplied')" id="statusPending" class="status-no flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-100">
+                            <button type="button" onclick="setStatus('unreplied')" id="statusUnreplied" class="status-no flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-100">
                                 ⏳ 未回复
                             </button>
                         </div>
                         <input type="hidden" id="status" value="unreplied">
+                        <input type="hidden" id="editRowIndex" value="">
                         
                         <!-- 国家/区域 -->
                         <div class="grid grid-cols-2 gap-4">
@@ -178,7 +179,7 @@
                         <!-- 客户背景 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">🏢 客户背景</label>
-                            <input type="text" id="background" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="如：健身房、经销商、批发商">
+                            <input type="text" id="background" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="如：健身房、经销商">
                         </div>
                         
                         <!-- 成单金额 -->
@@ -193,7 +194,7 @@
                             <textarea id="details" rows="2" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus resize-none" placeholder="客户的具体需求..."></textarea>
                         </div>
                         
-                        <button type="submit" class="btn-primary w-full py-4 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
+                        <button type="submit" id="submitBtn" class="btn-primary w-full py-4 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
                             保存客户信息
                         </button>
@@ -214,25 +215,12 @@
                         <option value="replied">✅ 已回复</option>
                         <option value="unreplied">⏳ 未回复</option>
                     </select>
-                    <select id="sourceFilter" onchange="filterRecords()" class="px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
-                        <option value="">全部渠道</option>
-                        <option value="Alibaba">Alibaba</option>
-                        <option value="Made-in-China">Made-in-China</option>
-                        <option value="Google搜索">Google搜索</option>
-                        <option value="展会">展会</option>
-                        <option value="社交媒体">社交媒体</option>
-                        <option value="老客户推荐">老客户推荐</option>
-                    </select>
                     <select id="regionFilter" onchange="filterRecords()" class="px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
                         <option value="">全部区域</option>
                         <option value="东南亚">🌏 东南亚</option>
                         <option value="欧洲">🇪🇺 欧洲</option>
                         <option value="中东">🌍 中东</option>
                         <option value="南美洲">🌎 南美洲</option>
-                        <option value="北美洲">🇺🇸 北美洲</option>
-                        <option value="大洋洲">🇦🇺 大洋洲</option>
-                        <option value="南亚">🇦🇫 南亚</option>
-                        <option value="非洲">🌍 非洲</option>
                     </select>
                 </div>
                 
@@ -260,20 +248,18 @@
         let allRecords = [];
         let filteredRecords = [];
         
-        // 预设数据
         const regionOptions = ['🌏 东南亚', '🇪🇺 欧洲', '🌍 中东', '🌎 南美洲', '🇺🇸 北美洲', '🇦🇺 大洋洲', '🇦🇫 南亚', '🌍 非洲'];
         const sourceOptions = ['🛒 Alibaba', '🏭 Made-in-China', '🔍 Google搜索', '🎪 展会', '📱 社交媒体', '🤝 老客户推荐', '📞 电话营销', '📰 B2B平台', '🌐 官网询盘', '📌 其他'];
-        const countryOptions = ['USA', 'UK', 'Germany', 'France', 'Australia', 'Canada', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Thailand', 'Vietnam', 'Indonesia', 'Philippines', 'UAE', 'Saudi Arabia', 'Turkey', 'Brazil', 'Mexico', 'Argentina', 'Colombia', 'India', 'Russia', 'Italy', 'Spain', 'Netherlands', 'Poland', 'Czech Republic', 'Romania', 'Hungary', 'Bulgaria', 'Slovakia', 'Croatia', 'Serbia', 'Bosnia', 'Greece', 'Portugal', 'Sweden', 'Norway', 'Finland', 'Denmark', 'Belgium', 'Switzerland', 'Austria'];
+        const countryOptions = ['USA', 'UK', 'Germany', 'France', 'Australia', 'Canada', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Thailand', 'Vietnam', 'Indonesia', 'Philippines', 'UAE', 'Saudi Arabia', 'Turkey', 'Brazil', 'Mexico', 'Argentina', 'India', 'Russia', 'Italy', 'Spain', 'Netherlands'];
         
-        // 初始化datalist
         document.getElementById('regionList').innerHTML = regionOptions.map(r => `<option value="${r}">`).join('');
         document.getElementById('sourceList').innerHTML = sourceOptions.map(s => `<option value="${s}">`).join('');
         document.getElementById('countryList').innerHTML = countryOptions.map(c => `<option value="${c}">`).join('');
 
         function setStatus(status) {
             document.getElementById('status').value = status;
-            document.getElementById('statusRecovered').style.opacity = status === 'replied' ? '100%' : '50%';
-            document.getElementById('statusPending').style.opacity = status === 'unreplied' ? '100%' : '50%';
+            document.getElementById('statusReplied').style.opacity = status === 'replied' ? '100%' : '50%';
+            document.getElementById('statusUnreplied').style.opacity = status === 'unreplied' ? '100%' : '50%';
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -337,7 +323,6 @@
         function filterRecords() {
             const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
             const statusFilter = document.getElementById('statusFilter').value;
-            const sourceFilter = document.getElementById('sourceFilter').value;
             const regionFilter = document.getElementById('regionFilter').value;
             
             filteredRecords = allRecords.filter(r => {
@@ -346,9 +331,8 @@
                     r.phone.includes(keyword) ||
                     (r.country && r.country.toLowerCase().includes(keyword));
                 const matchStatus = !statusFilter || r.status === statusFilter;
-                const matchSource = !sourceFilter || r.source === sourceFilter;
                 const matchRegion = !regionFilter || (r.region && r.region.includes(regionFilter));
-                return match && matchStatus && matchSource && matchRegion;
+                return match && matchStatus && matchRegion;
             });
             
             renderRecords();
@@ -387,10 +371,39 @@
                         <div class="text-right">
                             <p class="text-2xl font-bold ${r.status === 'replied' ? 'text-emerald-500' : 'text-gray-400'}">$${(r.amount || 0).toLocaleString()}</p>
                             <p class="text-xs text-gray-400 mt-1">${formatDate(r.time)}</p>
+                            <button onclick="editRecord(${i})" class="mt-2 text-blue-500 hover:text-blue-700 text-sm flex items-center gap-1 justify-end">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                编辑
+                            </button>
                         </div>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function editRecord(index) {
+            const r = filteredRecords[index];
+            
+            document.getElementById('status').value = r.status || 'unreplied';
+            setStatus(r.status || 'unreplied');
+            document.getElementById('country').value = r.country || '';
+            document.getElementById('region').value = r.region || '';
+            document.getElementById('customerName').value = r.customerName || '';
+            document.getElementById('phone').value = r.phone || '';
+            document.getElementById('email').value = r.email || '';
+            document.getElementById('source').value = r.source || '';
+            document.getElementById('background').value = r.background || '';
+            document.getElementById('amount').value = r.amount || '';
+            document.getElementById('details').value = r.details || '';
+            document.getElementById('editRowIndex').value = r.phone; // 用电话作为唯一标识
+            
+            // 改变提交按钮
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> 更新记录`;
+            
+            // 滚动到表单
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('✏️ 正在编辑: ' + r.customerName, 'success');
         }
 
         function updateStats() {
@@ -425,7 +438,8 @@
                 details: document.getElementById('details').value.trim(),
                 amount: parseFloat(document.getElementById('amount').value) || 0,
                 email: document.getElementById('email').value.trim(),
-                status: document.getElementById('status').value
+                status: document.getElementById('status').value,
+                originalPhone: document.getElementById('editRowIndex').value
             };
 
             if (!data.phone || !data.country || !data.customerName) {
@@ -433,13 +447,14 @@
                 return;
             }
 
-            const btn = e.target.querySelector('button[type="submit"]');
+            const btn = document.getElementById('submitBtn');
+            const isEdit = data.originalPhone && data.originalPhone !== data.phone;
             const originalText = btn.innerHTML;
             btn.innerHTML = '<span class="animate-pulse">💾 保存中...</span>';
             btn.disabled = true;
 
             try {
-                const response = await fetch(GAS_URL, {
+                const response = await fetch(GAS_URL + (isEdit ? '?action=update' : ''), {
                     method: 'POST',
                     body: JSON.stringify(data)
                 });
@@ -450,16 +465,17 @@
                     showToast('✅ ' + result.message, 'success');
                     document.getElementById('customerForm').reset();
                     setStatus('unreplied');
+                    document.getElementById('editRowIndex').value = '';
+                    btn.innerHTML = originalText;
                     loadRecords();
                 } else {
-                    showToast('⚠️ ' + result.message, result.existing ? 'warning' : 'error');
-                    if (result.existing) loadRecords();
+                    showToast('⚠️ ' + result.message, 'error');
                 }
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             } finally {
-                btn.innerHTML = originalText;
                 btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         });
 

@@ -21,7 +21,6 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
-    <!-- Header -->
     <header class="gradient-bg text-white py-6 shadow-lg">
         <div class="container mx-auto px-4 max-w-6xl">
             <div class="flex justify-between items-center">
@@ -45,7 +44,6 @@
     </header>
 
     <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <!-- Stats Cards -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
             <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
                 <div class="flex items-center justify-between">
@@ -95,7 +93,6 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Form -->
             <div class="lg:col-span-1">
                 <div class="glass rounded-2xl shadow-lg p-6 sticky top-4">
                     <div class="flex items-center justify-between mb-4">
@@ -104,18 +101,17 @@
                     </div>
                     
                     <form id="customerForm" class="space-y-4">
-                        <!-- 客户状态 -->
                         <div class="flex gap-3 mb-4">
-                            <button type="button" onclick="setStatus('replied')" id="statusRecovered" class="status-yes flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-50">
+                            <button type="button" onclick="setStatus('replied')" id="statusReplied" class="status-yes flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-50">
                                 ✅ 已回复
                             </button>
-                            <button type="button" onclick="setStatus('unreplied')" id="statusPending" class="status-no flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-100">
+                            <button type="button" onclick="setStatus('unreplied')" id="statusUnreplied" class="status-no flex-1 py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 opacity-100">
                                 ⏳ 未回复
                             </button>
                         </div>
                         <input type="hidden" id="status" value="unreplied">
+                        <input type="hidden" id="editRowIndex" value="">
                         
-                        <!-- 国家/区域 -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">🌍 国家 *</label>
@@ -132,19 +128,15 @@
                                     <option value="🌎 南美洲">
                                     <option value="🇺🇸 北美洲">
                                     <option value="🇦🇺 大洋洲">
-                                    <option value="🇦🇫 南亚">
-                                    <option value="🌍 非洲">
                                 </datalist>
                             </div>
                         </div>
                         
-                        <!-- 客户名称 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">👤 客户名称 *</label>
                             <input type="text" id="customerName" required class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="公司或个人名称">
                         </div>
                         
-                        <!-- 联系方式 -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">📞 电话 *</label>
@@ -156,10 +148,9 @@
                             </div>
                         </div>
                         
-                        <!-- 获客途径 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">📢 获客途径</label>
-                            <input type="text" id="source" list="sourceList" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="搜索或输入新渠道">
+                            <input type="text" id="source" list="sourceList" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="搜索或输入">
                             <datalist id="sourceList">
                                 <option value="🛒 Alibaba">
                                 <option value="🏭 Made-in-China">
@@ -167,32 +158,25 @@
                                 <option value="🎪 展会">
                                 <option value="📱 社交媒体">
                                 <option value="🤝 老客户推荐">
-                                <option value="📞 电话营销">
-                                <option value="📰 B2B平台">
-                                <option value="🌐 官网询盘">
-                                <option value="📌 其他">
                             </datalist>
                         </div>
                         
-                        <!-- 客户背景 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">🏢 客户背景</label>
-                            <input type="text" id="background" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="如：健身房、经销商">
+                            <input type="text" id="background" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="如：健身房">
                         </div>
                         
-                        <!-- 成单金额 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">💰 成单金额 (USD)</label>
                             <input type="number" id="amount" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="0">
                         </div>
                         
-                        <!-- 具体需求 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">📝 具体需求</label>
-                            <textarea id="details" rows="2" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus resize-none" placeholder="客户的具体需求..."></textarea>
+                            <textarea id="details" rows="2" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus resize-none" placeholder=""></textarea>
                         </div>
                         
-                        <button type="submit" class="btn-primary w-full py-4 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
+                        <button type="submit" id="submitBtn" class="btn-primary w-full py-4 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
                             保存客户信息
                         </button>
@@ -200,9 +184,7 @@
                 </div>
             </div>
             
-            <!-- Records -->
             <div class="lg:col-span-2">
-                <!-- Search & Filter -->
                 <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap gap-4">
                     <div class="flex-1 min-w-[200px] relative">
                         <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -217,12 +199,9 @@
                         <option value="">全部区域</option>
                         <option value="东南亚">🌏 东南亚</option>
                         <option value="欧洲">🇪🇺 欧洲</option>
-                        <option value="中东">🌍 中东</option>
-                        <option value="南美洲">🌎 南美洲</option>
                     </select>
                 </div>
                 
-                <!-- Records List -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                     <div class="p-6 border-b border-gray-100 flex justify-between items-center">
                         <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -231,7 +210,6 @@
                         <span id="recordCount" class="text-gray-500 text-sm">3 条</span>
                     </div>
                     <div id="recordsList" class="divide-y divide-gray-100">
-                        <!-- Demo Records -->
                         <div class="p-6 hover:bg-gray-50 transition-colors card-hover border-l-4 border-emerald-500">
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
@@ -244,36 +222,15 @@
                                     <div class="flex flex-wrap gap-4 text-sm text-gray-500">
                                         <span class="flex items-center gap-1">📞 +1-555-1234</span>
                                         <span class="flex items-center gap-1">📧 john@gym.com</span>
-                                        <span class="flex items-center gap-1">🏢 健身房</span>
                                     </div>
-                                    <p class="text-gray-400 text-sm mt-2">📝 需要20台健身器材，包括跑步机、哑铃等</p>
                                 </div>
                                 <div class="text-right">
                                     <p class="text-2xl font-bold text-emerald-500">$2,000</p>
                                     <p class="text-xs text-gray-400 mt-1">今天</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-6 hover:bg-gray-50 transition-colors card-hover border-l-4 border-emerald-500">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-3 mb-2 flex-wrap">
-                                        <span class="font-bold text-lg text-gray-800">John's Gym</span>
-                                        <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs">✅ 已回复</span>
-                                        <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">UK</span>
-                                        <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">🇪🇺 欧洲</span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-4 text-sm text-gray-500">
-                                        <span class="flex items-center gap-1">📞 +44-777-8888</span>
-                                        <span class="flex items-center gap-1">📧 sales@gym.uk</span>
-                                        <span class="flex items-center gap-1">🏢 经销商</span>
-                                    </div>
-                                    <p class="text-gray-400 text-sm mt-2">📝 批量采购商用健身设备</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-2xl font-bold text-emerald-500">$1,500</p>
-                                    <p class="text-xs text-gray-400 mt-1">昨天</p>
+                                    <button onclick="editDemoRecord('+1-555-1234')" class="mt-2 text-blue-500 hover:text-blue-700 text-sm flex items-center gap-1 justify-end">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        编辑
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -289,13 +246,15 @@
                                     </div>
                                     <div class="flex flex-wrap gap-4 text-sm text-gray-500">
                                         <span class="flex items-center gap-1">📞 +61-400-1111</span>
-                                        <span class="flex items-center gap-1">🏢 健身房</span>
                                     </div>
-                                    <p class="text-gray-400 text-sm mt-2">📝 咨询家用健身器材，还在考虑中</p>
                                 </div>
                                 <div class="text-right">
                                     <p class="text-2xl font-bold text-gray-400">$0</p>
                                     <p class="text-xs text-gray-400 mt-1">周一</p>
+                                    <button onclick="editDemoRecord('+61-400-1111')" class="mt-2 text-blue-500 hover:text-blue-700 text-sm flex items-center gap-1 justify-end">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        编辑
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -305,38 +264,55 @@
         </div>
     </div>
 
-    <!-- Toast -->
     <div id="toast" class="fixed bottom-6 right-6 hidden transform transition-all duration-300 translate-y-4 opacity-0"></div>
 
     <script>
-        const regionOptions = ['🌏 东南亚', '🇪🇺 欧洲', '🌍 中东', '🌎 南美洲', '🇺🇸 北美洲', '🇦🇺 大洋洲', '🇦🇫 南亚', '🌍 非洲'];
-        const sourceOptions = ['🛒 Alibaba', '🏭 Made-in-China', '🔍 Google搜索', '🎪 展会', '📱 社交媒体', '🤝 老客户推荐', '📞 电话营销', '📰 B2B平台', '🌐 官网询盘', '📌 其他'];
-        const countryOptions = ['USA', 'UK', 'Germany', 'France', 'Australia', 'Canada', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Thailand', 'Vietnam', 'Indonesia', 'Philippines', 'UAE', 'Saudi Arabia', 'Turkey', 'Brazil', 'Mexico', 'Argentina', 'India', 'Russia', 'Italy', 'Spain', 'Netherlands'];
+        const regionOptions = ['🌏 东南亚', '🇪🇺 欧洲', '🌍 中东', '🌎 南美洲', '🇺🇸 北美洲', '🇦🇺 大洋洲'];
+        const sourceOptions = ['🛒 Alibaba', '🏭 Made-in-China', '🔍 Google搜索', '🎪 展会', '📱 社交媒体', '🤝 老客户推荐'];
+        const countryOptions = ['USA', 'UK', 'Germany', 'France', 'Australia', 'Canada', 'Japan', 'South Korea', 'Singapore', 'Malaysia'];
         
         document.getElementById('regionList').innerHTML = regionOptions.map(r => `<option value="${r}">`).join('');
         document.getElementById('sourceList').innerHTML = sourceOptions.map(s => `<option value="${s}">`).join('');
         document.getElementById('countryList').innerHTML = countryOptions.map(c => `<option value="${c}">`).join('');
 
         let allRecords = [
-            { time: new Date(), status: 'replied', phone: '+1-555-1234', email: 'john@gym.com', country: 'USA', region: '🌏 东南亚', customerName: 'ABC Fitness Gym', source: '🤝 老客户推荐', background: '健身房', details: '需要20台健身器材，包括跑步机、哑铃等', amount: 2000 },
-            { time: new Date(Date.now() - 86400000), status: 'replied', phone: '+44-777-8888', email: 'sales@gym.uk', country: 'UK', region: '🇪🇺 欧洲', customerName: "John's Gym", source: '🛒 Alibaba', background: '经销商', details: '批量采购商用健身设备', amount: 1500 },
-            { time: new Date(Date.now() - 172800000), status: 'unreplied', phone: '+61-400-1111', email: '', country: 'Australia', region: '🇦🇺 大洋洲', customerName: 'FitLife Center', source: '🔍 Google搜索', background: '健身房', details: '咨询家用健身器材，还在考虑中', amount: 0 }
+            { time: new Date(), status: 'replied', phone: '+1-555-1234', email: 'john@gym.com', country: 'USA', region: '🌏 东南亚', customerName: 'ABC Fitness Gym', source: '🤝 老客户推荐', background: '健身房', details: '需要20台器材', amount: 2000 },
+            { time: new Date(Date.now() - 172800000), status: 'unreplied', phone: '+61-400-1111', email: '', country: 'Australia', region: '🇦🇺 大洋洲', customerName: 'FitLife Center', source: '🔍 Google搜索', background: '健身房', details: '咨询家用器材', amount: 0 }
         ];
         let filteredRecords = [];
 
         function setStatus(status) {
             document.getElementById('status').value = status;
-            document.getElementById('statusRecovered').style.opacity = status === 'replied' ? '100%' : '50%';
-            document.getElementById('statusPending').style.opacity = status === 'unreplied' ? '100%' : '50%';
+            document.getElementById('statusReplied').style.opacity = status === 'replied' ? '100%' : '50%';
+            document.getElementById('statusUnreplied').style.opacity = status === 'unreplied' ? '100%' : '50%';
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             filterRecords();
         });
 
-        function refreshDemo() {
-            showToast('🔄 刷新成功（预览模式）', 'success');
-            filterRecords();
+        function editDemoRecord(phone) {
+            const r = allRecords.find(rec => rec.phone === phone);
+            if (!r) return;
+            
+            document.getElementById('status').value = r.status || 'unreplied';
+            setStatus(r.status || 'unreplied');
+            document.getElementById('country').value = r.country || '';
+            document.getElementById('region').value = r.region || '';
+            document.getElementById('customerName').value = r.customerName || '';
+            document.getElementById('phone').value = r.phone || '';
+            document.getElementById('email').value = r.email || '';
+            document.getElementById('source').value = r.source || '';
+            document.getElementById('background').value = r.background || '';
+            document.getElementById('amount').value = r.amount || '';
+            document.getElementById('details').value = r.details || '';
+            document.getElementById('editRowIndex').value = r.phone;
+            
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> 更新记录`;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('✏️ 正在编辑: ' + r.customerName, 'success');
         }
 
         function filterRecords() {
@@ -345,10 +321,7 @@
             const regionFilter = document.getElementById('regionFilter').value;
             
             filteredRecords = allRecords.filter(r => {
-                const match = !keyword || 
-                    r.customerName.toLowerCase().includes(keyword) ||
-                    r.phone.includes(keyword) ||
-                    (r.country && r.country.toLowerCase().includes(keyword));
+                const match = !keyword || r.customerName.toLowerCase().includes(keyword) || r.phone.includes(keyword);
                 const matchStatus = !statusFilter || r.status === statusFilter;
                 const matchRegion = !regionFilter || (r.region && r.region.includes(regionFilter));
                 return match && matchStatus && matchRegion;
@@ -368,7 +341,6 @@
             const unreplied = filteredRecords.filter(r => r.status !== 'replied').length;
             document.getElementById('repliedCount').textContent = replied;
             document.getElementById('unrepliedCount').textContent = unreplied;
-            
             const total = filteredRecords.filter(r => r.status === 'replied').reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
             document.getElementById('totalAmount').textContent = '$' + total.toLocaleString();
             const avg = replied > 0 ? Math.round(total / replied) : 0;
@@ -396,17 +368,20 @@
                 return;
             }
 
-            const exists = allRecords.find(r => r.phone === data.phone);
-            if (exists) {
-                showToast('⚠️ 电话 ' + data.phone + ' 已存在！', 'warning');
-                return;
+            const isEdit = document.getElementById('editRowIndex').value;
+            if (isEdit) {
+                const idx = allRecords.findIndex(r => r.phone === isEdit);
+                if (idx !== -1) allRecords[idx] = { ...allRecords[idx], ...data };
+                showToast('✅ ' + data.customerName + ' 已更新！（预览）', 'success');
+            } else {
+                allRecords.unshift(data);
+                showToast('✅ ' + data.customerName + ' 保存成功！（预览）', 'success');
             }
-
-            allRecords.unshift(data);
-            const statusText = data.status === 'replied' ? '✅ 已回复' : '⏳ 未回复';
-            showToast('✅ ' + data.customerName + ' (' + statusText + ') 保存成功！（预览）', 'success');
+            
             document.getElementById('customerForm').reset();
             setStatus('unreplied');
+            document.getElementById('editRowIndex').value = '';
+            document.getElementById('submitBtn').innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg> 保存客户信息`;
             filterRecords();
         });
 
@@ -417,6 +392,11 @@
             el.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 ${colors[type]}`;
             el.classList.remove('hidden', 'translate-y-4', 'opacity-0');
             setTimeout(() => { el.classList.add('translate-y-4', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); }, 3000);
+        }
+
+        function refreshDemo() {
+            showToast('🔄 刷新成功（预览模式）', 'success');
+            filterRecords();
         }
     </script>
 </body>
