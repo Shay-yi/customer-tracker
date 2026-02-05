@@ -3,159 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>客户记录系统 - 预览版</title>
+    <title>客户记录系统 | MBH - 预览版</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .input-focus { transition: all 0.2s; }
+        .input-focus:focus { box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+        .btn-primary { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .btn-primary:hover { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold flex items-center gap-2">
+                        <span class="text-3xl">📋</span> 客户记录系统
+                    </h1>
+                    <p class="text-white/80 text-sm mt-1">📅 2026-W05 · 预览版</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="refreshDemo()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        刷新
+                    </button>
+                    <span class="text-yellow-400 text-sm flex items-center gap-1">
+                        <span>🎮</span> 预览模式
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <h1 class="text-3xl font-bold text-center mb-2 text-gray-800">📋 客户记录系统</h1>
-        <p id="weekInfo" class="text-center text-gray-500 mb-8">📅 本周：2026-W05</p>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- 表单区域 -->
-            <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-800">➕ 新增客户</h2>
-                        <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">预览版</span>
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">本周客户</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1" id="totalCount">3</p>
                     </div>
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center"><span class="text-2xl">👥</span></div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">成单金额</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1" id="totalAmount">$4,500</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center"><span class="text-2xl">💰</span></div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">获客渠道</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1" id="sourceCount">3</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center"><span class="text-2xl">📢</span></div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">平均金额</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1" id="avgAmount">$1,500</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center"><span class="text-2xl">📊</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Form -->
+            <div class="lg:col-span-1">
+                <div class="glass rounded-2xl shadow-lg p-6 sticky top-4">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-bold text-gray-800">➕ 新增客户</h2>
+                        <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">* 必填</span>
+                    </div>
+                    
                     <form id="customerForm" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">📞 电话 *</label>
-                            <input type="tel" id="phone" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="必填">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">📞 电话 *</label>
+                                <input type="tel" id="phone" required class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="必填">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">🌍 国家 *</label>
+                                <input type="text" id="country" required class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="如：USA">
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">🌍 国家 *</label>
-                            <input type="text" id="country" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="如：USA">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">📍 区域</label>
-                            <input type="text" id="region" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="">
-                        </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">👤 客户名称 *</label>
-                            <input type="text" id="customerName" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="必填">
+                            <input type="text" id="customerName" required class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="公司或个人名称">
                         </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">📍 区域</label>
+                                <input type="text" id="region" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="如：California">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">💰 成单金额</label>
+                                <input type="number" id="amount" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="USD">
+                            </div>
+                        </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">📢 获客途径</label>
-                            <select id="source" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                            <select id="source" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
                                 <option value="">请选择</option>
-                                <option value="Alibaba">Alibaba</option>
-                                <option value="Made-in-China">Made-in-China</option>
-                                <option value="Google搜索">Google搜索</option>
-                                <option value="展会">展会</option>
-                                <option value="社交媒体">社交媒体</option>
-                                <option value="老客户推荐">老客户推荐</option>
-                                <option value="其他">其他</option>
+                                <option value="Alibaba">🛒 Alibaba</option>
+                                <option value="Made-in-China">🏭 Made-in-China</option>
+                                <option value="Google搜索">🔍 Google搜索</option>
+                                <option value="展会">🎪 展会</option>
+                                <option value="社交媒体">📱 社交媒体</option>
+                                <option value="老客户推荐">🤝 老客户推荐</option>
+                                <option value="其他">📌 其他</option>
                             </select>
                         </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">🏢 客户背景</label>
-                            <input type="text" id="background" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="如：健身房">
+                            <input type="text" id="background" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus" placeholder="如：健身房">
                         </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">📝 具体需求</label>
-                            <textarea id="details" rows="2" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder=""></textarea>
+                            <textarea id="details" rows="3" class="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus resize-none" placeholder="客户的具体需求..."></textarea>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">💰 成单金额</label>
-                            <input type="number" id="amount" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="0">
-                        </div>
-                        <button type="submit" class="w-full bg-emerald-500 text-white py-3 rounded-lg font-bold hover:bg-emerald-600 transition-colors">
-                            💾 保存
+                        
+                        <button type="submit" class="btn-primary w-full py-4 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                            保存客户信息
                         </button>
                     </form>
                 </div>
             </div>
             
-            <!-- 记录列表区域 -->
+            <!-- Records -->
             <div class="lg:col-span-2">
-                <!-- 提示消息 -->
-                <div id="message" class="hidden p-4 rounded-lg mb-4"></div>
-                
-                <!-- 统计卡片 -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white rounded-xl shadow p-4 text-center">
-                        <p class="text-3xl font-bold text-emerald-500" id="totalCount">3</p>
-                        <p class="text-gray-500 text-sm">本周客户</p>
+                <!-- Search -->
+                <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 flex items-center gap-4">
+                    <div class="flex-1 relative">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <input type="text" id="searchInput" oninput="filterRecords()" placeholder="搜索客户名称、电话或国家..." class="w-full pl-12 pr-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
                     </div>
-                    <div class="bg-white rounded-xl shadow p-4 text-center">
-                        <p class="text-3xl font-bold text-blue-500" id="totalAmount">$4,500</p>
-                        <p class="text-gray-500 text-sm">成单金额</p>
-                    </div>
-                    <div class="bg-white rounded-xl shadow p-4 text-center">
-                        <p class="text-3xl font-bold text-purple-500" id="sourceCount">2</p>
-                        <p class="text-gray-500 text-sm">获客渠道</p>
-                    </div>
-                    <div class="bg-white rounded-xl shadow p-4 text-center">
-                        <button onclick="refreshDemo()" class="text-blue-500 hover:text-blue-700 text-sm">
-                            🔄 刷新
-                        </button>
-                    </div>
+                    <select id="sourceFilter" onchange="filterRecords()" class="px-4 py-3 bg-gray-50 border-0 rounded-xl input-focus">
+                        <option value="">全部渠道</option>
+                        <option value="Alibaba">Alibaba</option>
+                        <option value="Made-in-China">Made-in-China</option>
+                        <option value="Google搜索">Google搜索</option>
+                        <option value="展会">展会</option>
+                        <option value="社交媒体">社交媒体</option>
+                        <option value="老客户推荐">老客户推荐</option>
+                    </select>
                 </div>
                 
-                <!-- 搜索 -->
-                <div class="bg-white rounded-xl shadow p-4 mb-6">
-                    <input type="text" id="searchInput" oninput="filterRecords()" placeholder="🔍 搜索客户名称、电话或国家..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-400 focus:outline-none">
-                </div>
-                
-                <!-- 记录列表 -->
-                <div class="bg-white rounded-2xl shadow-lg p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-800">📜 本周记录</h2>
+                <!-- Records List -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <span>📜</span> 本周记录
+                        </h2>
                         <span id="recordCount" class="text-gray-500 text-sm">3 条</span>
                     </div>
-                    <div id="recordsList" class="space-y-3">
-                        <!-- 模拟数据 -->
-                        <div class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <span class="font-bold text-lg text-gray-800">ABC Fitness Gym</span>
-                                    <span class="text-gray-500 ml-2">USA</span>
+                    <div id="recordsList" class="divide-y divide-gray-100">
+                        <!-- Demo Records -->
+                        <div class="p-6 hover:bg-gray-50 transition-colors card-hover">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="font-bold text-lg text-gray-800">ABC Fitness Gym</span>
+                                        <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">USA</span>
+                                        <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">🤝 老客户推荐</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-4 text-sm text-gray-500">
+                                        <span class="flex items-center gap-1">📞 +1-555-1234</span>
+                                        <span class="flex items-center gap-1">📍 California</span>
+                                        <span class="flex items-center gap-1">🏢 健身房</span>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-2">📝 需要20台健身器材，包括跑步机、哑铃等</p>
                                 </div>
-                                <span class="text-emerald-500 font-bold">$2,000</span>
+                                <div class="text-right">
+                                    <p class="text-2xl font-bold text-emerald-500">$2,000</p>
+                                    <p class="text-xs text-gray-400 mt-1">今天</p>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-600">
-                                <p>📞 +1-555-1234</p>
-                                <p>📍 California</p>
-                                <p>📢 老客户推荐</p>
-                                <p>🏢 健身房</p>
-                            </div>
-                            <p class="text-gray-500 text-sm mt-2">📝 需要20台健身器材，包括跑步机、哑铃等</p>
                         </div>
                         
-                        <div class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <span class="font-bold text-lg text-gray-800">John's Gym</span>
-                                    <span class="text-gray-500 ml-2">UK</span>
+                        <div class="p-6 hover:bg-gray-50 transition-colors card-hover">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="font-bold text-lg text-gray-800">John's Gym</span>
+                                        <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">UK</span>
+                                        <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">🛒 Alibaba</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-4 text-sm text-gray-500">
+                                        <span class="flex items-center gap-1">📞 +44-777-8888</span>
+                                        <span class="flex items-center gap-1">📍 London</span>
+                                        <span class="flex items-center gap-1">🏢 经销商</span>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-2">📝 批量采购商用健身设备</p>
                                 </div>
-                                <span class="text-emerald-500 font-bold">$1,500</span>
+                                <div class="text-right">
+                                    <p class="text-2xl font-bold text-emerald-500">$1,500</p>
+                                    <p class="text-xs text-gray-400 mt-1">昨天</p>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-600">
-                                <p>📞 +44-777-8888</p>
-                                <p>📍 London</p>
-                                <p>📢 Alibaba</p>
-                                <p>🏢 经销商</p>
-                            </div>
-                            <p class="text-gray-500 text-sm mt-2">📝 批量采购商用健身设备</p>
                         </div>
                         
-                        <div class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <span class="font-bold text-lg text-gray-800">FitLife Center</span>
-                                    <span class="text-gray-500 ml-2">Australia</span>
+                        <div class="p-6 hover:bg-gray-50 transition-colors card-hover">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="font-bold text-lg text-gray-800">FitLife Center</span>
+                                        <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">Australia</span>
+                                        <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">🔍 Google搜索</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-4 text-sm text-gray-500">
+                                        <span class="flex items-center gap-1">📞 +61-400-1111</span>
+                                        <span class="flex items-center gap-1">📍 Sydney</span>
+                                        <span class="flex items-center gap-1">🏢 健身房</span>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mt-2">📝 咨询家用健身器材</p>
                                 </div>
-                                <span class="text-emerald-500 font-bold">$1,000</span>
+                                <div class="text-right">
+                                    <p class="text-2xl font-bold text-emerald-500">$1,000</p>
+                                    <p class="text-xs text-gray-400 mt-1">周一</p>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-600">
-                                <p>📞 +61-400-1111</p>
-                                <p>📍 Sydney</p>
-                                <p>📢 Google搜索</p>
-                                <p>🏢 健身房</p>
-                            </div>
-                            <p class="text-gray-500 text-sm mt-2">📝 咨询家用健身器材</p>
                         </div>
                     </div>
                 </div>
@@ -163,66 +252,57 @@
         </div>
     </div>
 
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 hidden transform transition-all duration-300 translate-y-4 opacity-0"></div>
+
     <script>
-        let allRecords = [];
-        
-        // 初始化模拟数据
-        function initDemoData() {
-            allRecords = [
-                { time: new Date(), phone: '+1-555-1234', country: 'USA', region: 'California', customerName: 'ABC Fitness Gym', source: '老客户推荐', background: '健身房', details: '需要20台健身器材，包括跑步机、哑铃等', amount: 2000 },
-                { time: new Date(), phone: '+44-777-8888', country: 'UK', region: 'London', customerName: "John's Gym", source: 'Alibaba', background: '经销商', details: '批量采购商用健身设备', amount: 1500 },
-                { time: new Date(), phone: '+61-400-1111', country: 'Australia', region: 'Sydney', customerName: 'FitLife Center', source: 'Google搜索', background: '健身房', details: '咨询家用健身器材', amount: 1000 }
-            ];
-        }
-        
+        let allRecords = [
+            { time: new Date(), phone: '+1-555-1234', country: 'USA', region: 'California', customerName: 'ABC Fitness Gym', source: '老客户推荐', background: '健身房', details: '需要20台健身器材，包括跑步机、哑铃等', amount: 2000 },
+            { time: new Date(Date.now() - 86400000), phone: '+44-777-8888', country: 'UK', region: 'London', customerName: "John's Gym", source: 'Alibaba', background: '经销商', details: '批量采购商用健身设备', amount: 1500 },
+            { time: new Date(Date.now() - 172800000), phone: '+61-400-1111', country: 'Australia', region: 'Sydney', customerName: 'FitLife Center', source: 'Google搜索', background: '健身房', details: '咨询家用健身器材', amount: 1000 }
+        ];
+        let filteredRecords = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            filterRecords();
+        });
+
         function refreshDemo() {
-            showMessage('🔄 刷新成功（预览模式）', 'success');
+            showToast('🔄 刷新成功（预览模式）', 'success');
             filterRecords();
         }
 
         function filterRecords() {
             const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
-            const listEl = document.getElementById('recordsList');
-            const countEl = document.getElementById('recordCount');
+            const sourceFilter = document.getElementById('sourceFilter').value;
             
-            let filtered = allRecords;
-            
-            if (keyword) {
-                filtered = allRecords.filter(r => 
+            filteredRecords = allRecords.filter(r => {
+                const match = !keyword || 
                     r.customerName.toLowerCase().includes(keyword) ||
                     r.phone.includes(keyword) ||
                     r.country.toLowerCase().includes(keyword) ||
-                    (r.region && r.region.toLowerCase().includes(keyword))
-                );
-            }
+                    (r.region && r.region.toLowerCase().includes(keyword));
+                const matchSource = !sourceFilter || r.source === sourceFilter;
+                return match && matchSource;
+            });
             
-            countEl.textContent = filtered.length + ' 条';
-            
-            if (filtered.length === 0) {
-                listEl.innerHTML = '<p class="text-gray-500 text-center py-8">没有找到匹配的客户</p>';
-                return;
-            }
-            
-            const sorted = [...filtered].sort((a, b) => new Date(b.time) - new Date(a.time));
-            
-            listEl.innerHTML = sorted.map(r => `
-                <div class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <span class="font-bold text-lg text-gray-800">${r.customerName}</span>
-                            <span class="text-gray-500 ml-2">${r.country}</span>
-                        </div>
-                        <span class="text-emerald-500 font-bold">$${r.amount || 0}</span>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-600">
-                        <p>📞 ${r.phone}</p>
-                        <p>📍 ${r.region || '-'}</p>
-                        <p>📢 ${r.source || '-'}</p>
-                        <p>🏢 ${r.background || '-'}</p>
-                    </div>
-                    ${r.details ? `<p class="text-gray-500 text-sm mt-2">📝 ${r.details}</p>` : ''}
-                </div>
-            `).join('');
+            renderRecords();
+            updateStats();
+        }
+
+        function renderRecords() {
+            const listEl = document.getElementById('recordsList');
+            document.getElementById('recordCount').textContent = filteredRecords.length + ' 条';
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = filteredRecords.length;
+            const total = filteredRecords.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            document.getElementById('totalAmount').textContent = '$' + total.toLocaleString();
+            const sources = new Set(filteredRecords.filter(r => r.source).map(r => r.source));
+            document.getElementById('sourceCount').textContent = sources.size;
+            const avg = filteredRecords.length > 0 ? Math.round(total / filteredRecords.length) : 0;
+            document.getElementById('avgAmount').textContent = '$' + avg.toLocaleString();
         }
 
         document.getElementById('customerForm').addEventListener('submit', async (e) => {
@@ -240,44 +320,30 @@
             };
 
             if (!data.phone || !data.country || !data.customerName) {
-                showMessage('请填写必填字段', 'error');
+                showToast('❌ 请填写必填字段', 'error');
                 return;
             }
 
-            // 检查重复（预览模式）
             const exists = allRecords.find(r => r.phone === data.phone);
             if (exists) {
-                showMessage('⚠️ 电话 ' + data.phone + ' 已存在！', 'warning');
+                showToast('⚠️ 电话 ' + data.phone + ' 已存在！', 'warning');
                 return;
             }
 
-            // 添加到本地
             allRecords.unshift(data);
-            
-            showMessage('✅ ' + data.customerName + ' 保存成功！（预览模式，数据仅保存在浏览器）', 'success');
+            showToast('✅ ' + data.customerName + ' 保存成功！（预览）', 'success');
             document.getElementById('customerForm').reset();
             filterRecords();
-            updateStats();
         });
 
-        function updateStats() {
-            document.getElementById('totalCount').textContent = allRecords.length;
-            const total = allRecords.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
-            document.getElementById('totalAmount').textContent = '$' + total.toLocaleString();
-            const sources = new Set(allRecords.filter(r => r.source).map(r => r.source));
-            document.getElementById('sourceCount').textContent = sources.size;
-        }
-
-        function showMessage(msg, type) {
-            const el = document.getElementById('message');
+        function showToast(msg, type = 'success') {
+            const el = document.getElementById('toast');
+            const colors = { success: 'bg-emerald-500 text-white', error: 'bg-red-500 text-white', warning: 'bg-yellow-500 text-white' };
             el.textContent = msg;
-            const colors = { success: 'bg-green-100 text-green-700', error: 'bg-red-100 text-red-700', warning: 'bg-yellow-100 text-yellow-700' };
-            el.className = `p-4 rounded-lg mb-4 ${colors[type]}`;
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 5000);
+            el.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 ${colors[type]}`;
+            el.classList.remove('hidden', 'translate-y-4', 'opacity-0');
+            setTimeout(() => { el.classList.add('translate-y-4', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); }, 3000);
         }
-
-        initDemoData();
     </script>
 </body>
 </html>
